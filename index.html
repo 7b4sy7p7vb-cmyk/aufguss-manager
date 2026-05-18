@@ -924,8 +924,9 @@ function renderDienstplan(){
       let cell;
       if(onVac)cell=`<span class="dp-vac">🏖 Urlaub</span>`;
       else if(entry){
+        const PAUSE_STAFF=['Maik (7h)','Luca (8h)','Jonathan'];
         const tStr=entry.end?`${entry.start}–${entry.end}`:entry.start;
-        const hStr=entry.workedH?` (${entry.workedH}h)`:'';
+        const hStr=entry.workedH?` (${entry.workedH}h${PAUSE_STAFF.includes(name)?' netto':''})`:'';
         cell=`<span class="dp-av" style="background:${col}15;color:${col};font-size:10px">${tStr}${hStr}</span>`;
       }else cell=`<span class="dp-no">—</span>`;
       return`<td style="${isT?'background:var(--accent-bg)':''}">${cell}</td>`;
@@ -1003,7 +1004,10 @@ function saveDPTable(year,month){
       if(startVal.toUpperCase()==='MSS'){availFrom=11;}
       else if(sH!==null){for(const s of[11,12,13,14,15,16,17,18,19,20,21,22])if(sH<=s){availFrom=s;break;}}
       if(availFrom!==null){
-        const workedH=sH!==null&&eH!==null&&eH>sH?Math.round((eH-sH)*10)/10:null;
+        const PAUSE_H={'Maik (7h)':0.5,'Luca (8h)':0.5,'Jonathan':0.5};
+        const rawH=sH!==null&&eH!==null&&eH>sH?(eH-sH):null;
+        const pause=PAUSE_H[name]||0;
+        const workedH=rawH!==null?Math.round((rawH-pause)*10)/10:null;
         SCHEDULE[ds].push({name,start:startVal,end:endVal||null,availFrom,workedH});
       }
     });
@@ -1063,7 +1067,7 @@ function renderAuswertung(){
     return{name,shifts:mh.shifts,actual:mh.h,target:tgt,diff:mh.h-tgt,ftNote};
   });
   const anyH=hsData.some(s=>s.actual>0);
-  document.getElementById('aus-workhours').innerHTML=anyH?hsData.map(s=>{const pct=s.target>0?Math.min(100,Math.round(s.actual/s.target*100)):0;return`<div class="mr"><span class="ml" style="font-weight:600">${s.name.split(' ')[0]}</span><div class="hb2"><div class="hbf2" style="width:${pct}%;background:${s.diff>=0?'var(--green)':'var(--red)'}"></div></div><span style="font-family:var(--mono);font-size:11px;font-weight:700;color:${s.diff>=0?'var(--green)':'var(--red)'};min-width:75px;text-align:right">${s.actual>0?fmt(s.actual,1)+' / '+s.target+'h ('+( s.diff>=0?'+':'')+fmt(s.diff,0)+'h)':'— / '+s.target+'h'}</span></div>`;}).join(''):'<div style="font-size:12px;color:var(--text3);padding:6px 0">Endzeiten im Dienstplan eintragen für Stundenauswertung</div>';
+  document.getElementById('aus-workhours').innerHTML=anyH?hsData.map(s=>{const pct=s.target>0?Math.min(100,Math.round(s.actual/s.target*100)):0;return`<div class="mr"><span class="ml" style="font-weight:600">${s.name.split(' ')[0]}</span><div class="hb2"><div class="hbf2" style="width:${pct}%;background:${s.diff>=0?'var(--green)':'var(--red)'}"></div></div><span style="font-family:var(--mono);font-size:11px;font-weight:700;color:${s.diff>=0?'var(--green)':'var(--red)'};min-width:75px;text-align:right">${s.actual>0?fmt(s.actual,1)+' / '+s.target+'h ('+( s.diff>=0?'+':'')+fmt(s.diff,0)+'h)':'— / '+s.target+'h'}</span></div>`;}).join(''):'<div style="font-size:12px;color:var(--text3);padding:6px 0">Endzeiten im Dienstplan eintragen für Stundenauswertung (30 Min. Pause bei Maik, Luca &amp; Jonathan bereits abgezogen)</div>';
   // Empfehlungen
   const topH=m.hours.reduce((a,b)=>a.total>b.total?a:b,{h:'?',total:0});
   const recs=[];
