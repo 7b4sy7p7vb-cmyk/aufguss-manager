@@ -259,6 +259,9 @@ tr:hover td{background:var(--bg3)}
   <button class="nb" onclick="showTab('bestellen',this)">&#128233; Bestellliste</button>
   <button class="nb" onclick="showTab('literanalyse',this)">&#128200; Liter-Analyse</button>
   <button class="nb" onclick="showTab('duftberater',this)">&#127800; Duft-Berater</button>
+  <button class="nb" onclick="showTab('bewertungen',this)">&#11088; Bewertungen</button>
+  <button class="nb" onclick="showTab('schicht',this)">&#128203; Schichtübergabe</button>
+  <button class="nb" onclick="showTab('jahresvergleich',this)">&#128200; Jahresvergleich</button>
   <button class="nb" onclick="openEinst()">&#128274; Einstellungen</button>
 </div>
 
@@ -297,6 +300,7 @@ tr:hover td{background:var(--bg3)}
     <span><span class="badge badge-green" style="font-size:10px">Zusatz</span> Manuell</span>
     <span><span class="dd"></span> App &nbsp;<span class="hd"></span> Excel-Daten</span>
   </div>
+  <div id="rating-active-banner" style="display:none;margin-bottom:10px"></div>
   <div class="sec" style="margin-top:10px">Gespeicherte Eintr&auml;ge</div>
   <div class="log-card"><div id="log-list"></div></div>
 </div></div>
@@ -547,6 +551,16 @@ tr:hover td{background:var(--bg3)}
     </div></div>
   </div>
 
+  <!-- Bewertungs-Einstellungen -->
+  <div class="acc">
+    <div class="acc-hd" id="ah-bew" onclick="acc('bew');renderBewertungsSettings()">
+      <div class="acc-title">&#11088; Bewertungs-Einstellungen</div><span class="acc-arrow">&#9660;</span>
+    </div>
+    <div class="acc-body" id="ab-bew"><div style="padding:14px 15px">
+      <div id="bewertungs-settings"></div>
+    </div></div>
+  </div>
+
   <!-- PIN -->
   <div class="acc">
     <div class="acc-hd" id="ah-pin" onclick="acc('pin')">
@@ -566,8 +580,61 @@ tr:hover td{background:var(--bg3)}
 
 </div></div>
 
+
+<!-- ═══ BEWERTUNGEN ═══ -->
+<div id="t-bewertungen" class="pane"><div class="sa">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+    <div>
+      <div style="font-size:15px;font-weight:700">⭐ Gäste-Bewertungen</div>
+      <div style="font-size:11px;color:var(--text2);margin-top:2px">Anonym · Bewertung über ⭐ Button in der Eingabe starten</div>
+    </div>
+    <button onclick="renderBewertungen()" style="padding:5px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:7px;color:var(--text2);font-size:12px;cursor:pointer;font-family:var(--font)">🔄 Aktualisieren</button>
+  </div>
+  <div id="bewertungen-content"></div>
+</div></div>
+
+<!-- ═══ SCHICHTÜBERGABE ═══ -->
+<div id="t-schicht" class="pane"><div class="sa">
+  <div style="font-size:15px;font-weight:700;margin-bottom:14px">📋 Schichtübergabe</div>
+  <!-- Neue Notiz -->
+  <div class="card" style="padding:14px 16px;margin-bottom:14px">
+    <div class="sec" style="margin-bottom:10px">Neue Übergabe-Notiz</div>
+    <div class="fg" style="margin-bottom:9px">
+      <div class="fi">
+        <label>Von (Mitarbeiter)</label>
+        <select id="shift-note-author" style="padding:7px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:13px;font-family:var(--font);outline:none;-webkit-appearance:none"></select>
+      </div>
+      <div class="fi">
+        <label>Priorität</label>
+        <select id="shift-note-priority" style="padding:7px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:13px;font-family:var(--font);outline:none;-webkit-appearance:none">
+          <option value="normal">Normal</option>
+          <option value="hoch">⚠ Wichtig</option>
+        </select>
+      </div>
+    </div>
+    <div class="fi" style="margin-bottom:10px">
+      <label>Nachricht</label>
+      <textarea id="shift-note-text" rows="3" placeholder="z.B. Lavendel fast leer, Gast hatte Fragen zu Peeling..." style="padding:8px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:13px;font-family:var(--font);outline:none;resize:vertical;width:100%"></textarea>
+    </div>
+    <button onclick="saveShiftNote()" class="sadd">📋 Notiz speichern</button>
+  </div>
+  <!-- Notizen-Liste -->
+  <div class="sec">Übergabe-Notizen</div>
+  <div class="card"><div id="shift-notes-list"></div></div>
+</div></div>
+
+<!-- ═══ JAHRESVERGLEICH ═══ -->
+<div id="t-jahresvergleich" class="pane"><div class="sa">
+  <div style="font-size:15px;font-weight:700;margin-bottom:4px">📊 Jahresvergleich</div>
+  <div style="font-size:11px;color:var(--text2);margin-bottom:16px">Gäste und Aufgüsse im Jahresüberblick</div>
+  <div id="jahres-content"></div>
+</div></div>
+
 </div><!-- end content -->
 </div><!-- end app -->
+
+<!-- KIOSK OVERLAY -->
+<div id="kiosk-overlay" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:2000;flex-direction:column;align-items:center;justify-content:center;overflow-y:auto"></div>
 
 <!-- PIN OVERLAY -->
 <div class="pov" id="pov" style="display:none">
@@ -713,6 +780,9 @@ function showTab(id,el){
   if(id==='bestellen')renderOrderList();
   if(id==='literanalyse')renderLiterAnalyse();
   if(id==='duftberater')initDuftberater();
+  if(id==='bewertungen')renderBewertungen();
+  if(id==='schicht'){renderSchichtuebergabe();populateShiftAuthor();}
+  if(id==='jahresvergleich')renderJahresvergleich();
   if(id==='einstellungen')renderEinstellungen();
 }
 
@@ -859,8 +929,24 @@ function renderLog(){
   const ds=document.getElementById('day-picker').value;
   const list=entries.filter(e=>e.date===ds).sort((a,b)=>a.hour-b.hour);
   const el=document.getElementById('log-list');
-  if(!list.length){el.innerHTML='<div class="le">Noch keine Einträge gespeichert</div>';return;}
-  el.innerHTML=list.map(e=>{const sc=[e.d1,e.d2,e.d3].filter(Boolean).join(' · ');const lbl=TLBLS[e.type]?`<span class="badge ${e.type.includes('peel')?'badge-purple':e.type.includes('para')?'badge-amber':'badge-green'}" style="margin-right:4px;font-size:10px">${TLBLS[e.type]}</span>`:'';return`<div class="lr">${lbl}<span class="lt">${String(e.hour).padStart(2,'0')}:00</span><span class="lw">${e.staff}</span><span class="ls">${sc}</span><span class="lg">${e.guests}${e.guests>=50?'<span class="o50">50+</span>':''}</span>${e.note?`<span class="ln">${e.note}</span>`:'<span></span>'}<button class="ld" onclick="delEntry('${e.id}')">✕</button></div>`;}).join('');
+  checkNegAlerts();
+  if(!list.length){el.innerHTML='<div class="le">Noch keine Eintr\u00e4ge gespeichert</div>';return;}
+  el.innerHTML=list.map(e=>{
+    const sc=[e.d1,e.d2,e.d3].filter(Boolean).join(' \u00b7 ');
+    const lbl=TLBLS[e.type]?'<span class="badge '+(e.type.includes('peel')?'badge-purple':e.type.includes('para')?'badge-amber':'badge-green')+'" style="margin-right:4px;font-size:10px">'+TLBLS[e.type]+'</span>':'';
+    const g50=e.guests>=50?'<span class="o50">50+</span>':'';
+    const noteEl=e.note?'<span class="ln">'+e.note+'</span>':'<span></span>';
+    const t=String(e.hour).padStart(2,'0')+':00';
+    return '<div class="lr">'+lbl+
+      '<span class="lt">'+t+'</span>'+
+      '<span class="lw">'+e.staff+'</span>'+
+      '<span class="ls">'+sc+'</span>'+
+      '<span class="lg">'+e.guests+g50+'</span>'+
+      noteEl+
+      '<button class="ld" onclick="delEntry(\''+e.id+'\')">&#10005;</button>'+
+      '<button onclick="startRatingById(\''+e.id+'\')" title="Bewertung starten" style="background:none;border:none;color:var(--amber);cursor:pointer;padding:2px 4px;font-size:14px">&#11088;</button>'+
+      '</div>';
+  }).join('');
 }
 function renderBanner(ds,slots,hist){
   const el=document.getElementById('banner');if(!el)return;
@@ -1186,6 +1272,10 @@ function renderEinstellungen(){
 }
 
 /* Mitarbeiter */
+function populateShiftAuthor(){
+  const sel=document.getElementById('shift-note-author');if(!sel)return;
+  sel.innerHTML=AUFGIESSER.map(s=>`<option value="${s}">${s}</option>`).join('');
+}
 function addStaff(){const n=document.getElementById('new-staff').value.trim();if(!n){toast('Name eingeben','red');return;}if(STAFF_CUSTOM.includes(n)){toast('Bereits vorhanden','red');return;}STAFF_CUSTOM.push(n);localStorage.setItem('aufguss_staff',JSON.stringify(STAFF_CUSTOM));document.getElementById('new-staff').value='';renderEinstellungen();toast('✓ Mitarbeiter hinzugefügt');}
 function rmStaff(i){if(!confirm(`"${STAFF_CUSTOM[i]}" wirklich entfernen?`))return;STAFF_CUSTOM.splice(i,1);localStorage.setItem('aufguss_staff',JSON.stringify(STAFF_CUSTOM));renderEinstellungen();toast('✓ Entfernt');}
 
@@ -1224,6 +1314,709 @@ function tick(){const n=new Date();document.getElementById('clock').innerHTML=n.
 /* ══ INIT ══ */
 initTheme();tick();setInterval(tick,30000);
 renderLager();startAlert();initEingabe();initDienstplan();
+/* ══════════════════════════════════════════════════════════════
+   BEWERTUNGSSYSTEM
+══════════════════════════════════════════════════════════════ */
+
+const JSONBIN_URL = 'https://api.jsonbin.io/v3/b';
+let activeSession = null;
+let tokenTimer = null;
+let kioskMode = false;
+
+function generateToken(){
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let t='';for(let i=0;i<6;i++)t+=chars[Math.floor(Math.random()*chars.length)];
+  return t;
+}
+
+/* Start rating - called when ⭐ clicked on log entry */
+function startRatingById(id){
+  const entry=entries.find(e=>e.id===id);
+  if(!entry){toast('Eintrag nicht gefunden','red');return;}
+  startRating(entry);
+}
+
+function startRating(aufgussEntry){
+  const delay=parseInt(localStorage.getItem('aufguss_rating_delay')||'0');
+  const duration=parseInt(localStorage.getItem('aufguss_rating_duration')||'30');
+  const now=Date.now();
+  const openAt=now+(delay*60000);
+  const closeAt=openAt+(duration*60000);
+  const token=generateToken();
+
+  activeSession={
+    token,
+    aufgussId:aufgussEntry.id,
+    date:aufgussEntry.date,
+    hour:aufgussEntry.hour,
+    staff:aufgussEntry.staff,
+    scents:[aufgussEntry.d1,aufgussEntry.d2,aufgussEntry.d3].filter(Boolean),
+    openAt,closeAt,
+    ratingCount:0,
+    created:now
+  };
+
+  // Save session
+  const sessions=JSON.parse(localStorage.getItem('aufguss_rating_sessions')||'[]');
+  sessions.push(activeSession);
+  localStorage.setItem('aufguss_rating_sessions',JSON.stringify(sessions));
+
+  // Show banner in Eingabe tab
+  showRatingBanner(activeSession,delay);
+
+  // If delay=0 open kiosk immediately
+  if(delay===0){
+    openKioskOverlay(activeSession);
+  } else {
+    startTokenCountdown(activeSession);
+  }
+
+  trySync(activeSession);
+}
+
+function showRatingBanner(session,delay){
+  const el=document.getElementById('rating-active-banner');
+  if(!el)return;
+  const scents=session.scents.join(', ');
+  const openTime=new Date(session.openAt).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+  const closeTime=new Date(session.closeAt).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+  el.style.display='block';
+  el.innerHTML='<div style="background:var(--green-bg);border:1px solid rgba(22,163,74,.3);border-radius:9px;padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">'+
+    '<span style="font-size:18px">&#11088;</span>'+
+    '<div style="flex:1">'+
+      '<div style="font-size:13px;font-weight:700;color:var(--green)">Bewertung aktiv &mdash; Token: <span style="font-family:var(--mono);letter-spacing:2px">'+session.token+'</span></div>'+
+      '<div style="font-size:11px;color:var(--text2);margin-top:1px">'+
+        (delay===0?'Sofort offen':'&Ouml;ffnet um '+openTime)+' &bull; Schliesst um '+closeTime+' &bull; D&uuml;fte: '+scents+
+      '</div>'+
+    '</div>'+
+    '<div id="token-countdown" style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--green)"></div>'+
+    '<button onclick="openKioskOverlay(activeSession)" style="padding:5px 12px;background:var(--green);border:none;border-radius:6px;color:#fff;font-size:12px;cursor:pointer;font-family:var(--font);font-weight:600">&#128065; Tablet &ouml;ffnen</button>'+
+    '<button onclick="copyTokenLink(\''+session.token+'\')" style="padding:5px 12px;background:var(--accent-bg);border:1px solid var(--accent);border-radius:6px;color:var(--accent);font-size:12px;cursor:pointer;font-family:var(--font);font-weight:600">&#128279; Link</button>'+
+  '</div>';
+}
+
+function copyTokenLink(token){
+  const url=window.location.href.split('?')[0]+'?bewertung='+token;
+  navigator.clipboard.writeText(url).catch(()=>{});
+  toast('&#10003; Link kopiert');
+}
+
+function startTokenCountdown(session){
+  clearInterval(tokenTimer);
+  tokenTimer=setInterval(()=>{
+    const now=Date.now();
+    const el=document.getElementById('token-countdown');
+    if(!el){clearInterval(tokenTimer);return;}
+    if(now<session.openAt){
+      const rem=Math.ceil((session.openAt-now)/1000);
+      el.textContent='Öffnet in '+Math.floor(rem/60)+':'+(String(rem%60).padStart(2,'0'));
+    } else if(now<session.closeAt){
+      const rem=Math.ceil((session.closeAt-now)/1000);
+      el.textContent='Offen: '+Math.floor(rem/60)+':'+(String(rem%60).padStart(2,'0'));
+      el.style.color='var(--amber)';
+      // Auto-open kiosk when timer reaches 0
+      if(rem<=1)openKioskOverlay(session);
+    } else {
+      el.textContent='Geschlossen';
+      el.style.color='var(--red)';
+      clearInterval(tokenTimer);
+    }
+  },1000);
+}
+
+/* ── KIOSK ── */
+function initKiosk(){
+  const urlParams=new URLSearchParams(window.location.search);
+  const tokenParam=urlParams.get('bewertung');
+  if(tokenParam){
+    kioskMode=true;
+    const sessions=JSON.parse(localStorage.getItem('aufguss_rating_sessions')||'[]');
+    const session=sessions.find(s=>s.token===tokenParam);
+    if(session){activeSession=session;openKioskOverlay(session);}
+    else{pollForSession(tokenParam);}
+    return;
+  }
+  if(localStorage.getItem('aufguss_kiosk')==='1'){
+    kioskMode=true;
+    showKioskStandby();
+    startKioskPoll();
+  }
+}
+
+function openKioskOverlay(session){
+  if(!session)return;
+  const now=Date.now();
+  if(now>session.closeAt){toast('Bewertungszeitraum abgelaufen','red');return;}
+  document.querySelector('.app').style.display='none';
+  const ko=document.getElementById('kiosk-overlay');
+  ko.style.display='flex';
+  showRatingForm(session);
+}
+
+function closeKioskOverlay(){
+  document.getElementById('kiosk-overlay').style.display='none';
+  document.querySelector('.app').style.display='flex';
+}
+
+function showKioskStandby(){
+  document.querySelector('.app').style.display='none';
+  const ko=document.getElementById('kiosk-overlay');
+  ko.style.display='flex';
+  ko.innerHTML='<div style="text-align:center;padding:40px 20px;max-width:600px;margin:0 auto">'+
+    '<div style="font-size:80px;margin-bottom:20px">&#128134;</div>'+
+    '<div style="font-size:32px;font-weight:700;margin-bottom:10px">Wie war Ihr Aufguss?</div>'+
+    '<div style="font-size:18px;color:var(--text2);margin-bottom:40px">Bitte bewerten Sie Ihren Aufguss</div>'+
+    '<div style="font-size:14px;color:var(--text3)" id="kiosk-status">Warte auf n&auml;chste Bewertung&hellip;</div>'+
+  '</div>';
+}
+
+let kioskPollTimer=null;
+function startKioskPoll(){
+  clearInterval(kioskPollTimer);
+  kioskPollTimer=setInterval(()=>{
+    // Check localStorage for active session
+    const sessions=JSON.parse(localStorage.getItem('aufguss_rating_sessions')||'[]');
+    const now=Date.now();
+    const active=sessions.find(s=>now>=s.openAt&&now<=s.closeAt);
+    if(active&&(!activeSession||active.token!==activeSession.token)){
+      activeSession=active;
+      showRatingForm(active);
+    }
+    // Also try JSONBin sync
+    const binId=localStorage.getItem('aufguss_jsonbin_id');
+    const apiKey=localStorage.getItem('aufguss_jsonbin_key');
+    if(binId&&apiKey){
+      fetch(JSONBIN_URL+'/'+binId+'/latest',{headers:{'X-Master-Key':apiKey}})
+        .then(r=>r.json()).then(data=>{
+          if(data.record&&data.record.activeSession){
+            const s=data.record.activeSession;
+            const now2=Date.now();
+            if(now2>=s.openAt&&now2<=s.closeAt){
+              // Merge into localStorage
+              const sessions2=JSON.parse(localStorage.getItem('aufguss_rating_sessions')||'[]');
+              if(!sessions2.find(x=>x.token===s.token)){
+                sessions2.push(s);
+                localStorage.setItem('aufguss_rating_sessions',JSON.stringify(sessions2));
+              }
+              activeSession=s;
+              showRatingForm(s);
+            }
+          }
+        }).catch(()=>{});
+    }
+  },5000);
+}
+
+function pollForSession(token){
+  const check=()=>{
+    const sessions=JSON.parse(localStorage.getItem('aufguss_rating_sessions')||'[]');
+    const session=sessions.find(s=>s.token===token);
+    if(session){activeSession=session;openKioskOverlay(session);}
+  };
+  check();
+  const t=setInterval(()=>{check();},3000);
+  setTimeout(()=>clearInterval(t),300000);
+}
+
+/* ── RATING FORM - multiple guests ── */
+function showRatingForm(session){
+  if(!session)return;
+  const now=Date.now();
+  if(now>session.closeAt){
+    showKioskStandby();
+    return;
+  }
+
+  // Reset rating data for each new guest
+  const ko=document.getElementById('kiosk-overlay');
+
+  const scentsHtml=session.scents.map(s=>
+    '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center">'+
+    '<div style="font-size:13px;font-weight:600;margin-bottom:10px;color:var(--text2)">&#129460; '+s+'</div>'+
+    '<div style="display:flex;gap:8px;justify-content:center">'+
+    '<button onclick="rateScentBtn(this,\''+s+'\',\'gut\')" class="kbtn" style="flex:1;padding:14px 6px;font-size:26px;background:var(--bg3);border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s">&#128077;</button>'+
+    '<button onclick="rateScentBtn(this,\''+s+'\',\'ok\')" class="kbtn" style="flex:1;padding:14px 6px;font-size:26px;background:var(--bg3);border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s">&#128528;</button>'+
+    '<button onclick="rateScentBtn(this,\''+s+'\',\'schlecht\')" class="kbtn" style="flex:1;padding:14px 6px;font-size:26px;background:var(--bg3);border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s">&#128078;</button>'+
+    '</div></div>'
+  ).join('');
+
+  // Show how many already rated
+  const allRatings=JSON.parse(localStorage.getItem('aufguss_ratings')||'[]');
+  const thisCount=allRatings.filter(r=>r.token===session.token).length;
+  const closeTime=new Date(session.closeAt).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+
+  ko.innerHTML=
+    '<div style="width:100%;max-width:680px;padding:20px 18px;overflow-y:auto;max-height:100vh">'+
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:8px">'+
+      '<div>'+
+        '<div style="font-size:26px;font-weight:700">&#11088; Ihr Feedback</div>'+
+        '<div style="font-size:12px;color:var(--text2);margin-top:2px">Anonym &bull; ca. 20 Sekunden &bull; offen bis '+closeTime+'</div>'+
+      '</div>'+
+      '<div style="text-align:right">'+
+        (thisCount>0?'<div style="font-size:12px;color:var(--green);font-weight:600">'+thisCount+' Bewertung'+(thisCount>1?'en':'')+' bisher</div>':'')+
+        '<button onclick="closeKioskOverlay()" style="margin-top:4px;padding:4px 10px;background:none;border:1px solid var(--border);border-radius:6px;color:var(--text3);font-size:11px;cursor:pointer;font-family:var(--font)">&#10005; Schlie&szlig;en</button>'+
+      '</div>'+
+    '</div>'+
+
+    // Stars
+    '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;text-align:center">'+
+      '<div style="font-size:14px;font-weight:700;margin-bottom:12px">Wie war der Aufguss insgesamt?</div>'+
+      '<div style="display:flex;justify-content:center;gap:6px" id="star-row">'+
+      [1,2,3,4,5].map(n=>'<button onclick="setStars('+n+')" id="star-'+n+'" style="font-size:44px;background:none;border:none;cursor:pointer;opacity:.25;transition:all .15s;padding:2px;line-height:1">&#11088;</button>').join('')+
+      '</div>'+
+    '</div>'+
+
+    // Intensität
+    '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px">'+
+      '<div style="font-size:14px;font-weight:700;margin-bottom:12px;text-align:center">Wie war die Intensit&auml;t?</div>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">'+
+      '<button onclick="setIntensity(\'schwach\',this)" class="ibtn" style="padding:16px 8px;background:var(--bg3);border:2px solid var(--border);border-radius:10px;cursor:pointer;font-family:var(--font);transition:all .15s">'+
+        '<div style="font-size:28px">&#129761;</div><div style="font-size:12px;margin-top:6px;font-weight:600">Zu schwach</div></button>'+
+      '<button onclick="setIntensity(\'perfekt\',this)" class="ibtn" style="padding:16px 8px;background:var(--bg3);border:2px solid var(--border);border-radius:10px;cursor:pointer;font-family:var(--font);transition:all .15s">'+
+        '<div style="font-size:28px">&#128525;</div><div style="font-size:12px;margin-top:6px;font-weight:600">Perfekt</div></button>'+
+      '<button onclick="setIntensity(\'stark\',this)" class="ibtn" style="padding:16px 8px;background:var(--bg3);border:2px solid var(--border);border-radius:10px;cursor:pointer;font-family:var(--font);transition:all .15s">'+
+        '<div style="font-size:28px">&#129557;</div><div style="font-size:12px;margin-top:6px;font-weight:600">Zu stark</div></button>'+
+      '</div>'+
+    '</div>'+
+
+    // Düfte
+    (session.scents.length?
+      '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px">'+
+      '<div style="font-size:14px;font-weight:700;margin-bottom:12px;text-align:center">Wie fanden Sie die D&uuml;fte?</div>'+
+      '<div style="display:flex;flex-direction:column;gap:9px">'+scentsHtml+'</div>'+
+      '</div>':'')+
+
+    // Submit
+    '<button onclick="submitRating(\''+session.token+'\')" id="submit-btn" disabled '+
+      'style="width:100%;padding:18px;background:var(--green);border:none;border-radius:12px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;font-family:var(--font);opacity:.35;transition:all .2s">'+
+      '&#10003; Bewertung absenden'+
+    '</button>'+
+    '<div style="text-align:center;margin-top:8px;font-size:11px;color:var(--text3)">Vollst&auml;ndig anonym &bull; keine pers&ouml;nlichen Daten</div>'+
+    '</div>';
+
+  // Reset state
+  window._ratingStars=0;
+  window._ratingIntensity=null;
+  window._ratingScents={};
+}
+
+function setStars(n){
+  window._ratingStars=n;
+  for(let i=1;i<=5;i++){
+    const el=document.getElementById('star-'+i);
+    if(el)el.style.opacity=i<=n?'1':'.25';
+  }
+  checkRatingComplete();
+}
+
+function setIntensity(v,el){
+  window._ratingIntensity=v;
+  document.querySelectorAll('.ibtn').forEach(b=>{
+    b.style.borderColor='var(--border)';b.style.background='var(--bg3)';
+  });
+  el.style.borderColor='var(--accent)';el.style.background='var(--accent-bg)';
+  checkRatingComplete();
+}
+
+function rateScentBtn(el,scent,val){
+  if(!window._ratingScents)window._ratingScents={};
+  window._ratingScents[scent]=val;
+  const parent=el.parentElement;
+  parent.querySelectorAll('.kbtn').forEach(b=>{
+    b.style.borderColor='var(--border)';b.style.background='var(--bg3)';
+  });
+  el.style.borderColor=val==='gut'?'var(--green)':val==='schlecht'?'var(--red)':'var(--amber)';
+  el.style.background=val==='gut'?'var(--green-bg)':val==='schlecht'?'var(--red-bg)':'var(--amber-bg)';
+  checkRatingComplete();
+}
+
+function checkRatingComplete(){
+  const btn=document.getElementById('submit-btn');
+  if(!btn)return;
+  const ok=window._ratingStars>0&&window._ratingIntensity!==null;
+  btn.disabled=!ok;
+  btn.style.opacity=ok?'1':'.35';
+}
+
+function submitRating(token){
+  const rating={
+    token,stars:window._ratingStars,intensity:window._ratingIntensity,
+    scents:window._ratingScents||{},timestamp:Date.now(),
+    id:Date.now().toString(36)
+  };
+
+  // Save rating
+  const ratings=JSON.parse(localStorage.getItem('aufguss_ratings')||'[]');
+  ratings.push(rating);
+  localStorage.setItem('aufguss_ratings',JSON.stringify(ratings));
+
+  // Update session count
+  const sessions=JSON.parse(localStorage.getItem('aufguss_rating_sessions')||'[]');
+  const idx=sessions.findIndex(s=>s.token===token);
+  if(idx>-1){sessions[idx].ratingCount=(sessions[idx].ratingCount||0)+1;localStorage.setItem('aufguss_rating_sessions',JSON.stringify(sessions));}
+
+  // Negative alert
+  if(rating.stars<=2){
+    const neg=JSON.parse(localStorage.getItem('aufguss_neg_alerts')||'[]');
+    neg.push({token,stars:rating.stars,ts:Date.now()});
+    localStorage.setItem('aufguss_neg_alerts',JSON.stringify(neg));
+  }
+
+  trySync({lastRating:rating,ts:Date.now()});
+  showThankYou(token);
+}
+
+function showThankYou(token){
+  const ko=document.getElementById('kiosk-overlay');
+  const allRatings=JSON.parse(localStorage.getItem('aufguss_ratings')||'[]');
+  const cnt=allRatings.filter(r=>r.token===token).length;
+  ko.innerHTML=
+    '<div style="text-align:center;padding:40px 20px;max-width:500px;margin:0 auto">'+
+    '<div style="font-size:90px;margin-bottom:16px;animation:none">&#128591;</div>'+
+    '<div style="font-size:30px;font-weight:700;color:var(--green);margin-bottom:10px">Vielen Dank!</div>'+
+    '<div style="font-size:16px;color:var(--text2);margin-bottom:8px">Ihr Feedback hilft uns, unsere Aufg&uuml;sse zu verbessern.</div>'+
+    (cnt>1?'<div style="font-size:13px;color:var(--text3);margin-bottom:20px">'+cnt+' Bewertungen f&uuml;r diesen Aufguss</div>':'')+
+    '<div style="font-size:13px;color:var(--text3)" id="ty-timer"></div>'+
+    '<button onclick="showRatingForm(activeSession)" style="margin-top:16px;padding:14px 30px;background:var(--accent);border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:var(--font)">&#43; N&auml;chste Bewertung</button>'+
+    '</div>';
+
+  // Auto-reset after 3 seconds
+  let secs=3;
+  const timer=setInterval(()=>{
+    const el=document.getElementById('ty-timer');
+    if(el)el.textContent='Automatisch in '+secs+' Sek.'+String.fromCharCode(8230);
+    secs--;
+    if(secs<0){
+      clearInterval(timer);
+      // Check if session still open
+      const session=activeSession;
+      if(session&&Date.now()<=session.closeAt){
+        showRatingForm(session);
+      } else {
+        if(kioskMode)showKioskStandby();
+        else closeKioskOverlay();
+      }
+    }
+  },1000);
+}
+
+function trySync(data){
+  const binId=localStorage.getItem('aufguss_jsonbin_id');
+  const apiKey=localStorage.getItem('aufguss_jsonbin_key');
+  if(!binId||!apiKey)return;
+  fetch(JSONBIN_URL+'/'+binId,{
+    method:'PUT',
+    headers:{'Content-Type':'application/json','X-Master-Key':apiKey},
+    body:JSON.stringify(data)
+  }).catch(()=>{});
+}
+
+/* ── RATINGS AUSWERTUNG ── */
+function renderBewertungen(){
+  const sessions=JSON.parse(localStorage.getItem('aufguss_rating_sessions')||'[]');
+  const ratings=JSON.parse(localStorage.getItem('aufguss_ratings')||'[]');
+  const negAlerts=JSON.parse(localStorage.getItem('aufguss_neg_alerts')||'[]');
+  localStorage.setItem('aufguss_neg_alerts','[]');
+  document.querySelectorAll('.neg-badge').forEach(el=>el.remove());
+
+  const el=document.getElementById('bewertungen-content');
+  if(!el)return;
+
+  if(!ratings.length){
+    el.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)">'+
+      '<div style="font-size:40px;margin-bottom:12px">&#11088;</div>'+
+      '<div style="font-size:14px">Noch keine Bewertungen</div>'+
+      '<div style="font-size:12px;margin-top:8px;color:var(--text3)">Klicke auf &#11088; neben einem Eintrag in der Eingabe um eine Bewertung zu starten</div>'+
+    '</div>';
+    return;
+  }
+
+  const total=ratings.length;
+  const avgStars=total?(ratings.reduce((a,r)=>a+r.stars,0)/total).toFixed(1):'—';
+  const perfekt=ratings.filter(r=>r.intensity==='perfekt').length;
+  const negCount=ratings.filter(r=>r.stars<=2).length;
+
+  const scentRatings={};
+  ratings.forEach(r=>{
+    Object.entries(r.scents||{}).forEach(([name,val])=>{
+      if(!scentRatings[name])scentRatings[name]={gut:0,ok:0,schlecht:0,total:0};
+      scentRatings[name][val]++;scentRatings[name].total++;
+    });
+  });
+
+  const starDist=[5,4,3,2,1].map(n=>({n,cnt:ratings.filter(r=>r.stars===n).length}));
+  const maxStar=Math.max(...starDist.map(s=>s.cnt),1);
+
+  el.innerHTML=
+    '<div class="sum-bar" style="margin-bottom:14px">'+
+      '<div class="sc"><div class="sc-lbl">Bewertungen</div><div class="sc-val">'+total+'</div></div>'+
+      '<div class="sc"><div class="sc-lbl">&#216; Sterne</div><div class="sc-val" style="color:var(--amber)">'+avgStars+' &#11088;</div></div>'+
+      '<div class="sc"><div class="sc-lbl">Intensit&auml;t OK</div><div class="sc-val" style="color:var(--green)">'+(total?Math.round(perfekt/total*100):0)+'%</div></div>'+
+      '<div class="sc"><div class="sc-lbl">Negativ</div><div class="sc-val" style="color:'+(negCount>0?'var(--red)':'var(--green)')+'">'+negCount+'</div><div class="sc-sub">&#8804; 2 Sterne</div></div>'+
+    '</div>'+
+
+    (negAlerts.length?'<div class="alert alert-red" style="margin-bottom:12px"><div class="ah">&#128276; '+negAlerts.length+' neue negative Bewertung'+(negAlerts.length>1?'en':'')+'</div><div style="font-size:12px;color:var(--red)">Bitte Ursache pr&uuml;fen</div></div>':'')+
+
+    '<div class="ag">'+
+      '<div class="ac"><div class="act">&#11088; Sterne-Verteilung</div>'+
+        starDist.map(s=>{const pct=Math.round(s.cnt/maxStar*100);return '<div class="mr"><span class="ml" style="font-weight:700">'+s.n+' &#11088;</span><div class="hb2"><div class="hbf2" style="width:'+pct+'%;background:var(--amber)"></div></div><span class="mv">'+s.cnt+'</span></div>';}).join('')+
+      '</div>'+
+      '<div class="ac"><div class="act">&#127777;&#65039; Intensit&auml;t</div>'+
+        [['perfekt','&#128525; Perfekt','var(--green)'],['schwach','&#129761; Zu schwach','var(--amber)'],['stark','&#129557; Zu stark','var(--red)']].map(([v,lbl,col])=>{
+          const cnt=ratings.filter(r=>r.intensity===v).length;
+          const pct=total?Math.round(cnt/total*100):0;
+          return '<div class="mr"><span class="ml">'+lbl+'</span><div class="hb2"><div class="hbf2" style="width:'+pct+'%;background:'+col+'"></div></div><span class="mv">'+cnt+'</span></div>';
+        }).join('')+
+      '</div>'+
+      '<div class="ac" style="grid-column:span 2"><div class="act">&#129460; Duft-Bewertungen</div>'+
+        (Object.entries(scentRatings).length?
+          Object.entries(scentRatings).map(([name,v])=>{
+            const score=v.total?Math.round((v.gut*100-v.schlecht*50)/v.total):0;
+            const col=score>60?'var(--green)':score>20?'var(--amber)':'var(--red)';
+            return '<div class="mr"><span class="ml" style="font-weight:600">'+name+'</span><span style="font-size:11px;color:var(--text3)">'+v.gut+'&#128077; '+v.ok+'&#128528; '+v.schlecht+'&#128078;</span><span class="mv" style="color:'+col+'">'+score+'%</span></div>';
+          }).join(''):
+          '<div style="font-size:12px;color:var(--text3)">Noch keine Duft-Bewertungen</div>')+
+      '</div>'+
+    '</div>'+
+
+    '<div class="card" style="padding:0 14px;margin-top:12px">'+
+      '<div style="padding:9px 0;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border)">Letzte Bewertungen</div>'+
+      ratings.slice(-15).reverse().map(r=>{
+        const d=new Date(r.timestamp);
+        const stars='&#11088;'.repeat(r.stars);
+        const intLabel=r.intensity==='perfekt'?'&#128525;':r.intensity==='schwach'?'&#129761;':'&#129557;';
+        return '<div class="lr"><span class="lt">'+d.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})+'</span><span style="font-size:13px">'+stars+'</span><span style="font-size:16px">'+intLabel+'</span><span style="font-size:11px;color:var(--text3);flex:1;text-align:right">'+d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})+'</span></div>';
+      }).join('')+
+    '</div>'+
+
+    '<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">'+
+      '<button onclick="exportRatings()" style="padding:7px 13px;background:var(--bg2);border:1px solid var(--border);border-radius:7px;color:var(--text2);font-size:12px;cursor:pointer;font-family:var(--font)">&#128229; Exportieren</button>'+
+      '<button onclick="resetRatings()" style="padding:7px 13px;background:var(--red-bg);border:1px solid rgba(220,38,38,.3);border-radius:7px;color:var(--red);font-size:12px;cursor:pointer;font-family:var(--font)">&#128465; Zurücksetzen</button>'+
+    '</div>';
+}
+
+function exportRatings(){
+  const ratings=JSON.parse(localStorage.getItem('aufguss_ratings')||'[]');
+  const blob=new Blob([JSON.stringify(ratings,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;
+  a.download='bewertungen_'+new Date().toISOString().split('T')[0]+'.json';
+  a.click();URL.revokeObjectURL(url);
+}
+
+/* ── NEG ALERT BADGE ── */
+
+
+/* ── BEWERTUNGS-EINSTELLUNGEN ── */
+
+
+
+
+
+function resetRatings(){
+  if(!confirm('Alle Bewertungen löschen?'))return;
+  localStorage.removeItem('aufguss_ratings');
+  localStorage.removeItem('aufguss_rating_sessions');
+  renderBewertungen();
+  toast('✓ Gelöscht');
+}
+/* ══════════════════════════════════════════════════════════════
+   SCHICHTÜBERGABE
+══════════════════════════════════════════════════════════════ */
+function renderSchichtuebergabe() {
+  const notes = JSON.parse(localStorage.getItem('aufguss_shift_notes') || '[]');
+  const el = document.getElementById('shift-notes-list');
+  if (!el) return;
+
+  if (!notes.length) {
+    el.innerHTML = '<div style="padding:14px;color:var(--text3);font-size:13px;text-align:center">Noch keine Übergabe-Notizen</div>';
+    return;
+  }
+  el.innerHTML = notes.slice(-20).reverse().map((n, i) => {
+    const d = new Date(n.ts);
+    const age = Date.now() - n.ts;
+    const isNew = age < 86400000; // < 24h
+    return `<div style="padding:11px 15px;border-bottom:1px solid var(--border);${isNew ? 'background:var(--amber-bg)' : ''}">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+        <span style="font-size:11px;font-weight:700;color:${isNew ? 'var(--amber)' : 'var(--text3)'}">${isNew ? '🆕' : '📋'} ${d.toLocaleDateString('de-DE', {day:'2-digit',month:'2-digit'})} ${d.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})}</span>
+        <span style="font-size:11px;color:var(--text3)">von ${n.author}</span>
+        <button onclick="deleteShiftNote(${notes.length-1-i})" style="margin-left:auto;background:none;border:none;color:var(--text3);cursor:pointer;font-size:12px">✕</button>
+      </div>
+      <div style="font-size:13px;color:var(--text);white-space:pre-wrap">${n.text}</div>
+      ${n.priority === 'hoch' ? '<div style="margin-top:5px"><span style="background:var(--red-bg);color:var(--red);border-radius:4px;font-size:10px;padding:2px 7px;font-weight:700">⚠ Wichtig</span></div>' : ''}
+    </div>`;
+  }).join('');
+}
+
+function saveShiftNote() {
+  const text = document.getElementById('shift-note-text').value.trim();
+  const author = document.getElementById('shift-note-author').value.trim() || 'Unbekannt';
+  const priority = document.getElementById('shift-note-priority').value;
+  if (!text) { toast('Bitte Text eingeben', 'red'); return; }
+
+  const notes = JSON.parse(localStorage.getItem('aufguss_shift_notes') || '[]');
+  notes.push({ text, author, priority, ts: Date.now() });
+  localStorage.setItem('aufguss_shift_notes', JSON.stringify(notes));
+
+  document.getElementById('shift-note-text').value = '';
+  renderSchichtuebergabe();
+  toast('✓ Notiz gespeichert');
+}
+
+function deleteShiftNote(idx) {
+  const notes = JSON.parse(localStorage.getItem('aufguss_shift_notes') || '[]');
+  notes.splice(idx, 1);
+  localStorage.setItem('aufguss_shift_notes', JSON.stringify(notes));
+  renderSchichtuebergabe();
+}
+
+/* ══════════════════════════════════════════════════════════════
+   JAHRESVERGLEICH
+══════════════════════════════════════════════════════════════ */
+function renderJahresvergleich() {
+  const el = document.getElementById('jahres-content');
+  if (!el) return;
+
+  // Group MONTHLY data by year
+  const byYear = {};
+  Object.entries(MONTHLY).forEach(([mk, m]) => {
+    const [y, mo] = mk.split('-');
+    if (!byYear[y]) byYear[y] = Array(12).fill(null);
+    byYear[y][parseInt(mo) - 1] = m;
+  });
+
+  const years = Object.keys(byYear).sort();
+  if (years.length < 1) {
+    el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text3)">Noch nicht genug Daten für Jahresvergleich</div>';
+    return;
+  }
+
+  const mns = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+  const colors = ['#2563eb','#16a34a','#d97706','#dc2626','#7c3aed'];
+
+  // Build comparison table
+  const tableRows = mns.map((mn, mi) => {
+    const cells = years.map(y => {
+      const m = byYear[y][mi];
+      return m ? `<td style="padding:7px 11px;border-top:1px solid var(--border);text-align:right;font-family:var(--mono);font-size:12px">${m.gaeste}</td>` :
+        `<td style="padding:7px 11px;border-top:1px solid var(--border);text-align:right;color:var(--text3);font-size:12px">—</td>`;
+    }).join('');
+    return `<tr><td style="padding:7px 11px;border-top:1px solid var(--border);font-weight:600;font-size:12px">${mn}</td>${cells}</tr>`;
+  }).join('');
+
+  // Year totals
+  const totals = years.map(y => {
+    const total = byYear[y].reduce((a, m) => a + (m ? m.gaeste : 0), 0);
+    const aufg = byYear[y].reduce((a, m) => a + (m ? m.aufguesse : 0), 0);
+    return { y, total, aufg };
+  });
+
+  el.innerHTML = `
+    <div class="sum-bar" style="margin-bottom:16px">
+      ${totals.map((t, i) => `
+        <div class="sc">
+          <div class="sc-lbl">Gäste ${t.y}</div>
+          <div class="sc-val" style="color:${colors[i]}">${t.total}</div>
+          <div class="sc-sub">${t.aufg} Aufgüsse</div>
+        </div>`).join('')}
+      ${totals.length >= 2 ? `
+        <div class="sc">
+          <div class="sc-lbl">Trend</div>
+          <div class="sc-val" style="color:${totals[totals.length-1].total >= totals[totals.length-2].total ? 'var(--green)' : 'var(--red)'}">
+            ${totals[totals.length-1].total >= totals[totals.length-2].total ? '📈' : '📉'}
+          </div>
+          <div class="sc-sub">${totals.length >= 2 ? (totals[totals.length-1].total - totals[totals.length-2].total > 0 ? '+' : '') + (totals[totals.length-1].total - totals[totals.length-2].total) + ' Gäste' : ''}</div>
+        </div>` : ''}
+    </div>
+
+    <div class="card" style="padding:0;overflow:hidden;margin-bottom:14px">
+      <div style="padding:11px 14px;background:var(--bg3);font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Gäste pro Monat im Vergleich</div>
+      <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse">
+        <thead><tr>
+          <th style="padding:7px 11px;background:var(--bg3);text-align:left;font-size:11px;font-weight:700;color:var(--text3)">Monat</th>
+          ${years.map((y, i) => `<th style="padding:7px 11px;background:var(--bg3);text-align:right;font-size:11px;font-weight:700;color:${colors[i]}">${y}</th>`).join('')}
+        </tr></thead>
+        <tbody>${tableRows}</tbody>
+        <tfoot><tr>
+          <td style="padding:8px 11px;font-weight:700;font-size:12px;border-top:2px solid var(--border)">Gesamt</td>
+          ${totals.map(t => `<td style="padding:8px 11px;text-align:right;font-weight:700;font-family:var(--mono);font-size:12px;border-top:2px solid var(--border)">${t.total}</td>`).join('')}
+        </tr></tfoot>
+      </table></div>
+    </div>
+
+    ${years.length < 2 ? `<div style="background:var(--accent-bg);border:1px solid rgba(37,99,235,.2);border-radius:8px;padding:11px 14px;font-size:12px;color:var(--accent)">
+      📊 Jahresvergleich wird vollständig sobald Daten aus mehreren Jahren vorliegen. Aktuell: ${years[0]}.
+    </div>` : ''}`;
+}
+
+/* ── NEG ALERT BADGE ── */
+function checkNegAlerts() {
+  const neg = JSON.parse(localStorage.getItem('aufguss_neg_alerts') || '[]');
+  if (neg.length) {
+    const navBtn = document.querySelector('.nb[onclick*="bewertungen"]');
+    if (navBtn && !navBtn.querySelector('.neg-badge')) {
+      const badge = document.createElement('span');
+      badge.className = 'neg-badge';
+      badge.style.cssText = 'background:var(--red);color:#fff;border-radius:10px;font-size:9px;padding:1px 5px;margin-left:4px;font-weight:700';
+      badge.textContent = neg.length;
+      navBtn.appendChild(badge);
+    }
+  }
+}
+
+/* ── EINSTELLUNGEN ERWEITERUNG ── */
+function renderBewertungsSettings() {
+  const delay = localStorage.getItem('aufguss_rating_delay') || '10';
+  const duration = localStorage.getItem('aufguss_rating_duration') || '15';
+  const binId = localStorage.getItem('aufguss_jsonbin_id') || '';
+  const apiKey = localStorage.getItem('aufguss_jsonbin_key') || '';
+  const kiosk = localStorage.getItem('aufguss_kiosk') === '1';
+
+  const el = document.getElementById('bewertungs-settings');
+  if (!el) return;
+  el.innerHTML = `
+    <div class="fg" style="margin-bottom:11px">
+      <div class="fi">
+        <label>Freischaltung nach (Minuten)</label>
+        <input type="number" id="bset-delay" value="${delay}" min="1" max="60">
+      </div>
+      <div class="fi">
+        <label>Bewertungsfenster (Minuten)</label>
+        <input type="number" id="bset-duration" value="${duration}" min="5" max="60">
+      </div>
+    </div>
+    <div class="fi" style="margin-bottom:11px">
+      <label>JSONBin.io Bin-ID (optional — für Echtzeit-Sync)</label>
+      <input type="text" id="bset-binid" value="${binId}" placeholder="z.B. 64abc123...">
+    </div>
+    <div class="fi" style="margin-bottom:11px">
+      <label>JSONBin.io API-Key (optional)</label>
+      <input type="password" id="bset-apikey" value="${apiKey}" placeholder="$2a$10$...">
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:11px">
+      <input type="checkbox" id="bset-kiosk" ${kiosk?'checked':''} style="width:16px;height:16px;accent-color:var(--accent)">
+      <label for="bset-kiosk" style="font-size:13px;cursor:pointer">Kiosk-Modus aktivieren (Tablet am Tresen)</label>
+    </div>
+    <button onclick="saveBewertungsSettings()" class="sadd">✓ Speichern</button>
+    <div style="margin-top:10px;font-size:11px;color:var(--text3)">
+      Ohne JSONBin funktioniert die Bewertung nur auf dem gleichen Gerät.<br>
+      Kiosk-Modus: Browser öffnet direkt die Bewertungsmaske (Vollbild empfohlen).
+    </div>`;
+}
+
+function saveBewertungsSettings() {
+  localStorage.setItem('aufguss_rating_delay', document.getElementById('bset-delay').value);
+  localStorage.setItem('aufguss_rating_duration', document.getElementById('bset-duration').value);
+  localStorage.setItem('aufguss_jsonbin_id', document.getElementById('bset-binid').value);
+  localStorage.setItem('aufguss_jsonbin_key', document.getElementById('bset-apikey').value);
+  localStorage.setItem('aufguss_kiosk', document.getElementById('bset-kiosk').checked ? '1' : '0');
+  toast('✓ Bewertungs-Einstellungen gespeichert');
+}
+
+
+// Init new features
+initKiosk();
+checkNegAlerts();
 </script>
 </body>
 </html>
