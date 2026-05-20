@@ -914,8 +914,10 @@ function buildDuftCell(rowI, slot, curVal, mixData, opts){
     const selB=opts.replace('value="'+mixData.b+'"','value="'+mixData.b+'" selected');
     return buildMixHTML(cellId, rowI, slot, selA, selB, mixData.da||0, mixData.db||0, mixData.name||'');
   }
+  // Apply selected to current value
+  const finalOpts=curVal?selOpt(curVal,opts):opts;
   return '<div style="display:flex;align-items:center;gap:2px">'+
-    '<select id="'+cellId+'" style="flex:1;min-width:0;padding:4px 5px;background:var(--bg);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:12px;font-family:var(--font);outline:none">'+opts+'</select>'+
+    '<select id="'+cellId+'" style="flex:1;min-width:0;padding:4px 5px;background:var(--bg);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:12px;font-family:var(--font);outline:none">'+finalOpts+'</select>'+
     '<button onclick="activateMix('+rowI+','+slot+')" title="Als Mischung" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:12px;padding:2px 3px;flex-shrink:0" onmouseover="this.style.color=\'var(--amber)\'" onmouseout="this.style.color=\'var(--text3)\'">&#129514;</button>'+
   '</div>';
 }
@@ -1196,6 +1198,22 @@ function saveDay(){
     }
   });
   localStorage.setItem('aufguss_v2',JSON.stringify(entries));
+  // Update row visuals without rebuilding entire day
+  slots.forEach((slot,i)=>{
+    const key=slot.h+'_'+slot.t+(slot.xid||'');
+    const saved=entries.find(e=>e.date===ds&&e.slotKey===key);
+    const row=document.getElementById('row-'+i);
+    if(!row)return;
+    if(saved&&saved.d1){
+      row.classList.add('row-done');
+      row.classList.remove('row-hist');
+      const tc=row.querySelector('.tc');
+      if(tc&&!tc.querySelector('.dd')){
+        const dot=document.createElement('span');
+        dot.className='dd';tc.appendChild(dot);
+      }
+    }
+  });
   renderLog(); renderLager();
   const d2=new Date(ds+'T12:00:00');const dow2=d2.getDay();
   const sl2=[...(DSLOTS[dow2]||DSLOTS[1]),...(extraSlots[ds]||[]).map(e=>({h:e.h,t:'extra',xid:e.xid}))];
