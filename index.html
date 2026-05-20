@@ -260,6 +260,7 @@ tr:hover td{background:var(--bg3)}
   <button class="nb" onclick="showTab('literanalyse',this)">&#128200; Liter-Analyse</button>
   <button class="nb" onclick="showTab('duftberater',this)">&#127800; Duft-Berater</button>
   <button class="nb" onclick="showTab('bewertungen',this)">&#11088; Bewertungen</button>
+  <button class="nb" onclick="showTab('experimente',this)">&#129514; Experimente</button>
   <button class="nb" onclick="showTab('schicht',this)">&#128203; Schichtübergabe</button>
   <button class="nb" onclick="showTab('jahresvergleich',this)">&#128200; Jahresvergleich</button>
   <button class="nb" onclick="openEinst()">&#128274; Einstellungen</button>
@@ -284,7 +285,11 @@ tr:hover td{background:var(--bg3)}
     <span style="font-size:11px;color:var(--text3)" id="slot-count"></span>&nbsp;Slots&nbsp;<span id="as-ind" style="font-size:11px"></span>
     <button class="sdb" onclick="saveDay()">&#10003; Speichern</button>
   </div>
-  <div style="font-size:11px;color:var(--green);margin-bottom:7px;font-weight:600">&#128190; Autosave aktiv</div>
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;flex-wrap:wrap">
+    <span style="font-size:11px;font-weight:700;color:var(--text2)">&#127774; Aufguss-Thema:</span>
+    <select id="day-theme" style="padding:4px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:13px;font-family:var(--font);outline:none;-webkit-appearance:none;flex:1;max-width:260px"></select>
+    <span style="font-size:11px;color:var(--green);font-weight:600">&#128190; Autosave aktiv</span>
+  </div>
   <div id="banner"></div>
   <div class="dtw"><table class="dtbl">
     <thead><tr>
@@ -469,6 +474,26 @@ tr:hover td{background:var(--bg3)}
     </div></div>
   </div>
   <div class="acc">
+    <div class="acc-hd" id="ah-surp" onclick="acc('surp')">
+      <div class="acc-title">&#127922; &Uuml;berraschungs-Generator</div><span class="acc-arrow">&#9660;</span>
+    </div>
+    <div class="acc-body" id="ab-surp"><div style="padding:14px 15px">
+      <div style="font-size:12px;color:var(--text2);margin-bottom:12px">
+        Generiert harmonische Duft-Kombinationen aus eurem verf&uuml;gbaren Lager
+      </div>
+      <div style="display:flex;gap:9px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
+        <select id="surp-mode" style="padding:6px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:13px;font-family:var(--font);outline:none;-webkit-appearance:none">
+          <option value="saison">&#127808; Saisonal (aktuell)</option>
+          <option value="kontrast">&#9654; Kopf + Herz + Basis</option>
+          <option value="zufall">&#127922; Zuf&auml;llig harmonisch</option>
+        </select>
+        <button onclick="generateSurprise()" style="padding:7px 16px;background:var(--accent);border:none;border-radius:7px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font)">&#127922; Generieren</button>
+      </div>
+      <div id="surp-result"></div>
+    </div></div>
+  </div>
+
+  <div class="acc">
     <div class="acc-hd" id="ah-check" onclick="acc('check')">
       <div class="acc-title">&#128300; Kombination pr&uuml;fen</div><span class="acc-arrow">&#9660;</span>
     </div>
@@ -551,6 +576,20 @@ tr:hover td{background:var(--bg3)}
     </div></div>
   </div>
 
+  <!-- Aufguss-Themen -->
+  <div class="acc">
+    <div class="acc-hd" id="ah-themes" onclick="acc('themes');renderThemes()">
+      <div class="acc-title">&#127774; Aufguss-Themen verwalten</div><span class="acc-arrow">&#9660;</span>
+    </div>
+    <div class="acc-body" id="ab-themes">
+      <div style="padding:11px 15px;display:flex;gap:7px;border-bottom:1px solid var(--border)">
+        <input type="text" id="new-theme" placeholder="Neues Thema (z.B. Sommerfrische)" style="flex:1;padding:7px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:13px;font-family:var(--font);outline:none">
+        <button class="sadd" onclick="addTheme()">&#43; Hinzuf&uuml;gen</button>
+      </div>
+      <div id="themes-list"></div>
+    </div>
+  </div>
+
   <!-- Bewertungs-Einstellungen -->
   <div class="acc">
     <div class="acc-hd" id="ah-bew" onclick="acc('bew');renderBewertungsSettings()">
@@ -604,6 +643,13 @@ tr:hover td{background:var(--bg3)}
     <button onclick="renderBewertungen()" style="padding:5px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:7px;color:var(--text2);font-size:12px;cursor:pointer;font-family:var(--font)">🔄 Aktualisieren</button>
   </div>
   <div id="bewertungen-content"></div>
+</div></div>
+
+<!-- ═══ EXPERIMENTE ═══ -->
+<div id="t-experimente" class="pane"><div class="sa">
+  <div style="font-size:15px;font-weight:700;margin-bottom:4px">&#129514; Mischungs-Experimente</div>
+  <div style="font-size:11px;color:var(--text2);margin-bottom:14px">Eigene Duft-Kombinationen testen und als festen Duft speichern</div>
+  <div id="exp-content"></div>
 </div></div>
 
 <!-- ═══ SCHICHTÜBERGABE ═══ -->
@@ -795,6 +841,7 @@ function showTab(id,el){
   if(id==='literanalyse')renderLiterAnalyse();
   if(id==='duftberater')initDuftberater();
   if(id==='bewertungen')renderBewertungen();
+  if(id==='experimente')renderExperimente();
   if(id==='schicht'){renderSchichtuebergabe();populateShiftAuthor();}
   if(id==='jahresvergleich')renderJahresvergleich();
   if(id==='einstellungen')renderEinstellungen();
@@ -857,6 +904,157 @@ function renderLager(){
 /* ══ EINGABE ══ */
 function initEingabe(){document.getElementById('day-picker').value=todayISO();buildDay();}
 function shiftDay(n){const p=document.getElementById('day-picker');const d=new Date(p.value+'T12:00:00');d.setDate(d.getDate()+n);p.value=d.toISOString().split('T')[0];buildDay();}
+
+/* ══ DUFT CELL WITH MIX SUPPORT ══ */
+
+function buildDuftCell(rowI, slot, curVal, mixData, opts){
+  const cellId='r'+rowI+'-d'+slot;
+  if(mixData&&mixData.a&&mixData.b){
+    const selA=opts.replace('value="'+mixData.a+'"','value="'+mixData.a+'" selected');
+    const selB=opts.replace('value="'+mixData.b+'"','value="'+mixData.b+'" selected');
+    return buildMixHTML(cellId, rowI, slot, selA, selB, mixData.da||0, mixData.db||0, mixData.name||'');
+  }
+  return '<div style="display:flex;align-items:center;gap:2px">'+
+    '<select id="'+cellId+'" style="flex:1;min-width:0;padding:4px 5px;background:var(--bg);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:12px;font-family:var(--font);outline:none">'+opts+'</select>'+
+    '<button onclick="activateMix('+rowI+','+slot+')" title="Als Mischung" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:12px;padding:2px 3px;flex-shrink:0" onmouseover="this.style.color=\'var(--amber)\'" onmouseout="this.style.color=\'var(--text3)\'">&#129514;</button>'+
+  '</div>';
+}
+
+function buildMixHTML(cellId, rowI, slot, optsA, optsB, da, db, name){
+  return '<div id="r'+rowI+'-mix'+slot+'-wrap" style="background:rgba(217,119,6,0.08);border:1px solid rgba(217,119,6,0.35);border-radius:6px;padding:5px 6px">'+
+    '<div style="display:flex;align-items:center;gap:4px;margin-bottom:4px">'+
+      '<span style="font-size:9px;font-weight:700;color:var(--amber);white-space:nowrap">&#129514; MIX</span>'+
+      '<button onclick="doSaveMix(\''+cellId+'\')" style="padding:2px 9px;background:var(--green);border:none;border-radius:4px;color:#fff;font-size:10px;font-weight:700;cursor:pointer;font-family:var(--font)">+ Speichern</button>'+
+      '<button onclick="clearMix('+rowI+','+slot+')" style="margin-left:auto;background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;padding:0 2px" title="Mischung aufheben">&#10005;</button>'+
+    '</div>'+
+    '<div style="display:flex;align-items:center;gap:3px;margin-bottom:3px">'+
+      '<select id="'+cellId+'-ma" onchange="onMixSelect(\''+cellId+'\',\'a\')" style="flex:1;padding:2px 4px;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:10px;font-family:var(--font);outline:none">'+optsA+'</select>'+
+      '<input type="number" id="'+cellId+'-da" value="'+da+'" min="1" max="60" placeholder="Tr." style="width:36px;padding:2px 3px;background:var(--bg);border:1px solid var(--amber);border-radius:4px;color:var(--amber);font-size:11px;font-family:var(--mono);font-weight:700;outline:none;text-align:center">'+
+      '<span style="font-size:9px;color:var(--text3)">Tr.</span>'+
+    '</div>'+
+    '<div style="display:flex;align-items:center;gap:3px;margin-bottom:4px">'+
+      '<select id="'+cellId+'-mb" onchange="onMixSelect(\''+cellId+'\',\'b\')" style="flex:1;padding:2px 4px;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:10px;font-family:var(--font);outline:none">'+optsB+'</select>'+
+      '<input type="number" id="'+cellId+'-db" value="'+db+'" min="1" max="60" placeholder="Tr." style="width:36px;padding:2px 3px;background:var(--bg);border:1px solid var(--amber);border-radius:4px;color:var(--amber);font-size:11px;font-family:var(--mono);font-weight:700;outline:none;text-align:center">'+
+      '<span style="font-size:9px;color:var(--text3)">Tr.</span>'+
+    '</div>'+
+    '<div style="display:flex;align-items:center;gap:4px">'+
+      '<input type="text" id="'+cellId+'-name" value="'+name+'" placeholder="Name z.B. Ingwer/Zitrone" style="flex:1;padding:2px 5px;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:10px;font-family:var(--font);outline:none">'+
+      '<label style="display:flex;align-items:center;gap:2px;font-size:9px;color:var(--text3);cursor:pointer;white-space:nowrap">'+
+        '<input type="checkbox" id="'+cellId+'-isexp" style="accent-color:var(--amber)"> Exp.'+
+      '</label>'+
+    '</div>'+
+  '</div>';
+}
+
+function onMixSelect(cellId, which){
+  const sel=document.getElementById(cellId+'-m'+which);
+  const dropEl=document.getElementById(cellId+'-d'+which);
+  const nameEl=document.getElementById(cellId+'-name');
+  if(!sel||!dropEl)return;
+  const sc=SCENTS.find(s=>s.name===sel.value);
+  if(sc&&sc.drops>0) dropEl.value=Math.ceil(sc.drops/2);
+  // Auto-fill name if empty
+  if(nameEl&&!nameEl.value){
+    const a=document.getElementById(cellId+'-ma');
+    const b=document.getElementById(cellId+'-mb');
+    if(a&&b&&a.value&&b.value) nameEl.value=a.value+'/'+b.value;
+  }
+}
+
+function activateMix(rowI, slot){
+  const cellId='r'+rowI+'-d'+slot;
+  const curSel=document.getElementById(cellId);
+  const curVal=curSel?curSel.value:'';
+  const sc=SCENTS.find(s=>s.name===curVal);
+  const halfDrops=sc&&sc.drops?Math.ceil(sc.drops/2):10;
+  const parent=curSel?curSel.closest('div'):null;
+  if(!parent)return;
+  const mkOpts=(presel)=>'<option value="">— bitte wählen —</option>'+
+    SCENTS.filter(s=>getStatus(s)!=='inactive').map(s=>
+      '<option value="'+s.name+'"'+(s.name===presel?' selected':'')+'>'+s.name+'</option>'
+    ).join('');
+  parent.outerHTML=buildMixHTML(cellId, rowI, slot, mkOpts(curVal), mkOpts(''), halfDrops, halfDrops, curVal?curVal+'/':'');
+}
+
+function clearMix(rowI, slot){
+  const cellId='r'+rowI+'-d'+slot;
+  const wrap=document.getElementById('r'+rowI+'-mix'+slot+'-wrap');
+  if(!wrap)return;
+  const opts='<option value="">— bitte wählen —</option>'+
+    SCENTS.filter(s=>getStatus(s)!=='inactive').map(s=>'<option value="'+s.name+'">'+s.name+'</option>').join('');
+  wrap.outerHTML='<div style="display:flex;align-items:center;gap:2px">'+
+    '<select id="'+cellId+'" style="flex:1;min-width:0;padding:4px 5px;background:var(--bg);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:12px;font-family:var(--font);outline:none">'+opts+'</select>'+
+    '<button onclick="activateMix('+rowI+','+slot+')" title="Als Mischung" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:12px;padding:2px 3px;flex-shrink:0">&#129514;</button>'+
+  '</div>';
+}
+
+function autoMixDrops(selId, dropId){
+  const sel=document.getElementById(selId);
+  const drop=document.getElementById(dropId);
+  if(!sel||!drop)return;
+  const sc=SCENTS.find(s=>s.name===sel.value);
+  if(sc&&sc.drops>0) drop.value=Math.ceil(sc.drops/2);
+}
+
+function doSaveMix(cellId){
+  const ma=(document.getElementById(cellId+'-ma')||{}).value||'';
+  const mb=(document.getElementById(cellId+'-mb')||{}).value||'';
+  const da=parseInt((document.getElementById(cellId+'-da')||{}).value)||0;
+  const db=parseInt((document.getElementById(cellId+'-db')||{}).value)||0;
+  const nameEl=document.getElementById(cellId+'-name');
+  if(!ma||!mb){toast('Bitte beide Düfte wählen','red');return;}
+  const n=((nameEl&&nameEl.value.trim())||(ma+'/'+mb));
+
+  // Save to SCENTS with stock:1 so it shows as active
+  if(!SCENTS.find(s=>s.name===n)){
+    const sc1=SCENTS.find(s=>s.name===ma)||{};
+    const sc2=SCENTS.find(s=>s.name===mb)||{};
+    const ml=Math.round(((sc1.ml||0.909)/2+(sc2.ml||0.909)/2)*100)/100;
+    SCENTS.push({name:n,uses:0,drops:da+db,ml,stock:1,usedBottles:0,rest:1,
+      price100:0,price250:0,price1000:0,isMix:true,components:[ma,mb]});
+    localStorage.setItem('aufguss_scents_custom',JSON.stringify(SCENTS));
+    experiments.push({id:Date.now().toString(36),date:todayISO(),
+      scent1:ma,scent2:mb,drops1:da,drops2:db,name:n,isExperiment:false,created:Date.now()});
+    saveExperiments();
+    renderLager();
+  }
+
+  // Parse row and slot from cellId (format: "r0-d3")
+  const parts=cellId.split('-');
+  const rowI=parseInt(parts[0].replace('r',''));
+  const slotNum=parseInt(parts[1].replace('d',''));
+
+  // Find the TD containing the mix panel
+  const wrap=document.getElementById('r'+rowI+'-mix'+slotNum+'-wrap');
+  if(wrap){
+    const td=wrap.closest('td');
+    if(td){
+      // Build select with all active scents, new mix pre-selected
+      const allNames=SCENTS
+        .filter(s=>getStatus(s)!=='inactive')
+        .map(s=>s.name)
+        .sort((a,b)=>a.localeCompare(b,'de'));
+      // Ensure new mix is in the list
+      if(!allNames.includes(n)) allNames.push(n);
+      const opts=allNames.map(nm=>
+        '<option value="'+nm+'"'+(nm===n?' selected':'')+'>'+nm+'</option>'
+      ).join('');
+      td.innerHTML=
+        '<div style="display:flex;align-items:center;gap:2px">'+
+          '<select id="'+cellId+'" style="flex:1;min-width:0;padding:4px 5px;'+
+            'background:var(--bg);border:1px solid var(--border);border-radius:5px;'+
+            'color:var(--text);font-size:12px;font-family:var(--font);outline:none">'+
+            '<option value="">— bitte wählen —</option>'+opts+
+          '</select>'+
+          '<button onclick="activateMix('+rowI+','+slotNum+')" title="Als Mischung" '+
+            'style="background:none;border:none;color:var(--text3);cursor:pointer;'+
+            'font-size:12px;padding:2px 3px;flex-shrink:0">&#129514;</button>'+
+        '</div>';
+    }
+  }
+  toast('✓ "'+n+'" gespeichert');
+}
+
 function buildDay(){
   const ds=document.getElementById('day-picker').value;
   const d=new Date(ds+'T12:00:00');const dow=d.getDay();
@@ -894,48 +1092,116 @@ function buildDay(){
     const dot=done?'<span class="dd"></span>':isHist?'<span class="hd"></span>':'';
     const o50=src&&src.guests>=50?`<span class="o50">50+</span>`:'';
     const d3=isPeel?`<td><input type="text" id="r${i}-d3" placeholder="Peeling-Art" value="${src&&src.d3?src.d3:''}"></td>`:
-      `<td><select id="r${i}-d3">${src&&src.d3?selOpt(src.d3,scE):scE}</select></td>`;
+      `<td>${buildDuftCell(i,3,src&&src.d3?src.d3:'',src&&src.mix3?src.mix3:null,scE)}</td>`;
     const gst=slot.t==='peeling_b'?`<td><input type="number" class="gi" id="r${i}-guests" value="0" disabled style="opacity:.4"></td>`:
       `<td><input type="number" class="gi" id="r${i}-guests" min="0" max="150" value="${src?src.guests:15}">${o50}</td>`;
+    
     return`<tr id="row-${i}" class="${TCSS[slot.t]||'rt-normal'} ${done?'row-done':isHist?'row-hist':''}" data-key="${key}">
       <td class="tc">${hStr}${dot}</td><td class="tbc">${lbadge}</td>
       <td><select id="r${i}-staff">${src&&src.staff?selOpt(src.staff,stOpts):stOpts}</select></td>
-      <td><select id="r${i}-d1">${src&&src.d1?selOpt(src.d1,scOpts):scOpts}</select></td>
-      <td><select id="r${i}-d2">${src&&src.d2?selOpt(src.d2,scE):scE}</select></td>
+      <td>${buildDuftCell(i,1,src&&src.d1?src.d1:'',src&&src.mix1?src.mix1:null,scOpts)}</td>
+      <td>${buildDuftCell(i,2,src&&src.d2?src.d2:'',src&&src.mix2?src.mix2:null,scE)}</td>
       ${d3}${gst}
-      <td><input type="text" id="r${i}-note" placeholder="optional…" value="${src?src.note||'':''}"></td>
+      <td><input type="text" id="r${i}-note" placeholder="Notiz…" value="${src&&src.note?src.note:''}"></td>
       ${isX?`<td><button class="drb" onclick="rmExtraSlot('${ds}','${slot.xid}')">✕</button></td>`:`<td></td>`}
     </tr>`;
   }).join('');
   document.getElementById('slot-count').textContent=slots.length;
+  // Theme selector
+  const themeEl=document.getElementById('day-theme');
+  if(themeEl){
+    const curTheme=localStorage.getItem('aufguss_theme_'+ds)||'';
+    themeEl.innerHTML=getThemeOpts(curTheme);
+    themeEl.onchange=()=>{localStorage.setItem('aufguss_theme_'+ds,themeEl.value);};
+  }
   document.getElementById('day-tbody').querySelectorAll('select,input').forEach(el=>{el.addEventListener('change',trigAS);el.addEventListener('input',trigAS);});
   renderBanner(ds,slots,hist);renderLog();
 }
 let _asT=null;
 function trigAS(){clearTimeout(_asT);const ind=document.getElementById('as-ind');if(ind)ind.innerHTML='💾…';_asT=setTimeout(()=>{saveDay();const i2=document.getElementById('as-ind');if(i2){i2.innerHTML='<span style="color:var(--green)">✓ Gespeichert</span>';setTimeout(()=>{if(i2)i2.innerHTML='';},2000);}},800);}
+function readDuftSlot(ri, slotNum, isPeelSlot){
+  const cellId='r'+ri+'-d'+slotNum;
+  const wrap=document.getElementById('r'+ri+'-mix'+slotNum+'-wrap');
+  if(wrap){
+    const ma=document.getElementById(cellId+'-ma');
+    const mb=document.getElementById(cellId+'-mb');
+    const da=document.getElementById(cellId+'-da');
+    const db=document.getElementById(cellId+'-db');
+    const isExp=document.getElementById(cellId+'-isexp');
+    const nameEl=document.getElementById(cellId+'-name');
+    const mix={
+      a:ma?ma.value:'', b:mb?mb.value:'',
+      da:parseInt(da&&da.value)||0, db:parseInt(db&&db.value)||0,
+      isExp:isExp?isExp.checked:false,
+      name:nameEl?nameEl.value.trim():''
+    };
+    const val=mix.a&&mix.b?(mix.a+' + '+mix.b):(mix.a||mix.b);
+    return {val, mix};
+  }
+  const el=document.getElementById(cellId);
+  return {val:el?el.value:'', mix:null};
+}
+
 function saveDay(){
-  const ds=document.getElementById('day-picker').value;const d=new Date(ds+'T12:00:00');const dow=d.getDay();
+  const ds=document.getElementById('day-picker').value;
+  const d=new Date(ds+'T12:00:00');const dow=d.getDay();
   const slots=[...(DSLOTS[dow]||DSLOTS[1]),...(extraSlots[ds]||[]).map(e=>({h:e.h,t:'extra',xid:e.xid}))];
   slots.sort((a,b)=>a.h-b.h||(a.t<b.t?-1:1));
   entries=entries.filter(e=>e.date!==ds);
   slots.forEach((slot,i)=>{
-    const d1el=document.getElementById(`r${i}-d1`);if(!d1el)return;const d1=d1el.value;if(!d1)return;
-    const d3el=document.getElementById(`r${i}-d3`);const key=`${slot.h}_${slot.t}${slot.xid||''}`;
-    const obj={date:ds,hour:slot.h,type:slot.t,slotKey:key,staff:document.getElementById(`r${i}-staff`).value,
-      d1,d2:document.getElementById(`r${i}-d2`).value,d3:d3el?d3el.value:'',
-      guests:parseInt(document.getElementById(`r${i}-guests`).value)||0,
-      note:document.getElementById(`r${i}-note`).value.trim(),id:ds+'_'+key};
+    const isPeel=slot.t==='peeling_a'||slot.t==='peeling_b';
+    const r1=readDuftSlot(i,1,false);
+    const r2=readDuftSlot(i,2,false);
+    const r3=readDuftSlot(i,3,isPeel);
+    const d1=r1.val; if(!d1)return;
+    const key=slot.h+'_'+slot.t+(slot.xid||'');
+    const staffEl=document.getElementById('r'+i+'-staff');
+    const guestEl=document.getElementById('r'+i+'-guests');
+    const noteEl=document.getElementById('r'+i+'-note');
+    const obj={
+      date:ds, hour:slot.h, type:slot.t, slotKey:key,
+      staff:staffEl?staffEl.value:'',
+      d1:r1.val, d2:r2.val, d3:r3.val,
+      mix1:r1.mix, mix2:r2.mix, mix3:r3.mix,
+      guests:parseInt(guestEl&&guestEl.value)||0,
+      note:noteEl?noteEl.value.trim():'',
+      id:ds+'_'+key
+    };
     entries.push(obj);
-    [obj.d1,obj.d2,obj.d3].filter(Boolean).forEach(sn=>{const sc=SCENTS.find(s=>s.name===sn);if(sc&&(getStock(sc)<=0||sc.ml<=0)&&!EXEMPT.includes(sn)){extraUses[sn]=(extraUses[sn]||0)+1;}});
+    // Auto-save mix experiments
+    [r1,r2,r3].forEach((r,si)=>{
+      if(!r.mix||!r.mix.a||!r.mix.b)return;
+      const mn=r.mix.name||(r.mix.a+' & '+r.mix.b);
+      if(!experiments.some(e=>e.scent1===r.mix.a&&e.scent2===r.mix.b&&e.date===ds)){
+        experiments.push({id:Date.now().toString(36)+'_'+si,date:ds,
+          scent1:r.mix.a,scent2:r.mix.b,drops1:r.mix.da,drops2:r.mix.db,
+          name:mn,isExperiment:r.mix.isExp,created:Date.now()});
+        saveExperiments();
+      }
+    });
+    [obj.d1,obj.d2,obj.d3].filter(Boolean).forEach(sn=>{
+      const sc=SCENTS.find(s=>s.name===sn);
+      if(sc&&(getStock(sc)<=0||sc.ml<=0)&&!EXEMPT.includes(sn)){
+        extraUses[sn]=(extraUses[sn]||0)+1;
+      }
+    });
     localStorage.setItem('aufguss_extra_uses',JSON.stringify(extraUses));
-    const row=document.getElementById('row-'+i);if(row){row.classList.add('row-done');const tc=row.querySelector('.tc');if(tc&&!tc.querySelector('.dd')){const dot=document.createElement('span');dot.className='dd';tc.appendChild(dot);}}
+    const row=document.getElementById('row-'+i);
+    if(row){
+      row.classList.add('row-done');
+      const tc=row.querySelector('.tc');
+      if(tc&&!tc.querySelector('.dd')){
+        const dot=document.createElement('span');dot.className='dd';tc.appendChild(dot);
+      }
+    }
   });
   localStorage.setItem('aufguss_v2',JSON.stringify(entries));
-  renderLog();renderLager();
+  renderLog(); renderLager();
   const d2=new Date(ds+'T12:00:00');const dow2=d2.getDay();
   const sl2=[...(DSLOTS[dow2]||DSLOTS[1]),...(extraSlots[ds]||[]).map(e=>({h:e.h,t:'extra',xid:e.xid}))];
   renderBanner(ds,sl2,HISTORY[ds]||[]);
 }
+
 function addExtraSlot(){const ds=document.getElementById('day-picker').value;const h=parseInt(document.getElementById('extra-h').value);if(isNaN(h)||h<10||h>23)return;if(!extraSlots[ds])extraSlots[ds]=[];const xid='x'+(++xRowCtr);extraSlots[ds].push({h,xid});localStorage.setItem('aufguss_extra',JSON.stringify(extraSlots));buildDay();}
 function rmExtraSlot(ds,xid){if(!extraSlots[ds])return;extraSlots[ds]=extraSlots[ds].filter(e=>e.xid!==xid);localStorage.setItem('aufguss_extra',JSON.stringify(extraSlots));entries=entries.filter(e=>!(e.date===ds&&e.slotKey&&e.slotKey.includes(xid)));localStorage.setItem('aufguss_v2',JSON.stringify(entries));buildDay();}
 function delEntry(id){entries=entries.filter(e=>e.id!==id);localStorage.setItem('aufguss_v2',JSON.stringify(entries));buildDay();}
@@ -944,24 +1210,28 @@ function renderLog(){
   const list=entries.filter(e=>e.date===ds).sort((a,b)=>a.hour-b.hour);
   const el=document.getElementById('log-list');
   checkNegAlerts();
-  if(!list.length){el.innerHTML='<div class="le">Noch keine Eintr\u00e4ge gespeichert</div>';return;}
+  if(!list.length){el.innerHTML='<div class="le">Noch keine Einträge gespeichert</div>';return;}
   el.innerHTML=list.map(e=>{
-    const sc=[e.d1,e.d2,e.d3].filter(Boolean).join(' \u00b7 ');
+    const parts=[];
+    if(e.mix1&&e.mix1.a&&e.mix1.b) parts.push(e.mix1.a+'+'+e.mix1.b);
+    else if(e.d1) parts.push(e.d1);
+    if(e.mix2&&e.mix2.a&&e.mix2.b) parts.push(e.mix2.a+'+'+e.mix2.b);
+    else if(e.d2) parts.push(e.d2);
+    if(e.mix3&&e.mix3.a&&e.mix3.b) parts.push(e.mix3.a+'+'+e.mix3.b);
+    else if(e.d3) parts.push(e.d3);
+    const sc=parts.join(' · ');
     const lbl=TLBLS[e.type]?'<span class="badge '+(e.type.includes('peel')?'badge-purple':e.type.includes('para')?'badge-amber':'badge-green')+'" style="margin-right:4px;font-size:10px">'+TLBLS[e.type]+'</span>':'';
     const g50=e.guests>=50?'<span class="o50">50+</span>':'';
     const noteEl=e.note?'<span class="ln">'+e.note+'</span>':'<span></span>';
     const t=String(e.hour).padStart(2,'0')+':00';
-    return '<div class="lr">'+lbl+
-      '<span class="lt">'+t+'</span>'+
-      '<span class="lw">'+e.staff+'</span>'+
-      '<span class="ls">'+sc+'</span>'+
-      '<span class="lg">'+e.guests+g50+'</span>'+
-      noteEl+
-      '<button class="ld" onclick="delEntry(\''+e.id+'\')">&#10005;</button>'+
-      '<button onclick="startRatingById(\''+e.id+'\')" title="Bewertung starten" style="background:none;border:none;color:var(--amber);cursor:pointer;padding:2px 4px;font-size:14px">&#11088;</button>'+
-      '</div>';
+    const hasMix=[e.mix1,e.mix2,e.mix3].some(m=>m&&m.a&&m.b);
+    const mixBtn=hasMix?'<button onclick="promptPromoteMix(\''+e.id+'\')" style="background:none;border:none;color:var(--green);cursor:pointer;padding:2px 4px;font-size:13px;font-weight:700" title="Als Duft speichern">+&#129514;</button>':'';
+    const ratingBtn='<button onclick="startRatingById(\''+e.id+'\')" style="background:none;border:none;color:var(--amber);cursor:pointer;padding:2px 4px;font-size:14px" title="Bewertung starten">&#11088;</button>';
+    const delBtn='<button class="ld" onclick="delEntry(\''+e.id+'\')">&#10005;</button>';
+    return '<div class="lr">'+lbl+'<span class="lt">'+t+'</span><span class="lw">'+e.staff+'</span><span class="ls">'+sc+'</span><span class="lg">'+e.guests+g50+'</span>'+noteEl+mixBtn+delBtn+ratingBtn+'</div>';
   }).join('');
 }
+
 function renderBanner(ds,slots,hist){
   const el=document.getElementById('banner');if(!el)return;
   const saved=entries.filter(e=>e.date===ds);const miss=[],inc=[];
@@ -1429,6 +1699,291 @@ function delSupplier(idx){
   const s=getSuppliers();s.splice(idx,1);saveSuppliers(s);renderLieferanten();toast('&#10003; Entfernt');
 }
 
+/* ══════════════════════════════════════════════════════════════
+   AUFGUSS-THEMEN
+══════════════════════════════════════════════════════════════ */
+
+const DEFAULT_THEMES = [
+  'Fit in den Tag','Frühlingsduft','Überraschung','Frische Brise',
+  'Pflegezermonie','Blütenzauber','Klangreise','Frühlingswald',
+  'Vitamin Bombe','Heiß & Kalt','Ruhiger Abschluss',
+  'Sommerfrische','Herbststimmung','Winterzauber','Waldspaziergang',
+  'Energieboost','Entspannung pur','Erkältungsschutz','Mediterran','Exotisch'
+];
+
+function getThemes(){
+  return JSON.parse(localStorage.getItem('aufguss_themes')||'null')||[...DEFAULT_THEMES];
+}
+function saveThemes(t){localStorage.setItem('aufguss_themes',JSON.stringify(t));}
+
+function getThemeOpts(cur){
+  const themes=getThemes();
+  let opts='<option value="">— kein Thema —</option>';
+  themes.forEach(t=>{opts+=`<option value="${t}"${cur===t?' selected':''}>${t}</option>`;});
+  return opts;
+}
+
+/* Render themes in Einstellungen */
+function renderThemes(){
+  const el=document.getElementById('themes-list');if(!el)return;
+  const themes=getThemes();
+  el.innerHTML=themes.map((t,i)=>
+    '<div class="srow"><div class="srn">'+t+'</div>'+
+    '<button class="sdel" onclick="delTheme('+i+')">&#10005;</button></div>'
+  ).join('');
+}
+function addTheme(){
+  const inp=document.getElementById('new-theme');
+  const name=inp.value.trim();if(!name){toast('Name eingeben','red');return;}
+  const t=getThemes();if(t.includes(name)){toast('Bereits vorhanden','red');return;}
+  t.push(name);saveThemes(t);inp.value='';renderThemes();toast('✓ Thema hinzugefügt');
+}
+function delTheme(i){
+  const t=getThemes();t.splice(i,1);saveThemes(t);renderThemes();toast('✓ Entfernt');
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MISCHUNGEN & EXPERIMENTE
+══════════════════════════════════════════════════════════════ */
+
+let experiments = JSON.parse(localStorage.getItem('aufguss_experiments')||'[]');
+
+function saveExperiments(){localStorage.setItem('aufguss_experiments',JSON.stringify(experiments));}
+
+/* Toggle Mischungs-Panel für einen Slot */
+function toggleMix(i){
+  const panel=document.getElementById('mix-panel-'+i);
+  if(!panel)return;
+  const open=panel.style.display!=='none';
+  panel.style.display=open?'none':'table-row';
+}
+
+/* Get drops for a scent */
+function getDrops(name){
+  const sc=SCENTS.find(s=>s.name===name);
+  return sc?sc.drops:20;
+}
+
+/* Update mix preview when scents change */
+function autoFillMixDrops(i, slot){
+  const selEl = document.getElementById('r'+i+'-mix'+slot);
+  const dropEl = document.getElementById('r'+i+'-mixd'+slot);
+  const stdEl = document.getElementById('r'+i+'-mixd'+slot+'-std');
+  if(!selEl||!dropEl)return;
+  const name = selEl.value;
+  if(!name){dropEl.value='';if(stdEl)stdEl.textContent='';return;}
+  const sc = SCENTS.find(s=>s.name===name);
+  const std = sc?sc.drops:20;
+  const half = Math.ceil(std/2);
+  dropEl.value = half;
+  if(stdEl) stdEl.textContent = '(Standard: '+std+' Tr.)';
+}
+
+function updateMixPreview(i){
+  // No longer needed as preview is inline - kept for compatibility
+}
+
+/* Save experiment */
+function saveExperiment(i,ds){
+  const m1El=document.getElementById('r'+i+'-mix1');
+  const m2El=document.getElementById('r'+i+'-mix2');
+  if(!m1El||!m2El)return null;
+  const m1=m1El.value, m2=m2El.value;
+  if(!m1&&!m2)return null;
+  const expCb=document.getElementById('r'+i+'-exp');
+  const d1El=document.getElementById('r'+i+'-mixd1');
+  const d2El=document.getElementById('r'+i+'-mixd2');
+  const nameInp=document.getElementById('r'+i+'-mixname');
+  const d1=parseInt(d1El&&d1El.value)||Math.ceil(getDrops(m1)/2);
+  const d2=parseInt(d2El&&d2El.value)||Math.ceil(getDrops(m2)/2);
+  const mixName=nameInp?nameInp.value.trim():(m1&&m2?m1+' & '+m2:m1||m2);
+  const isExp=expCb&&expCb.checked;
+  const exp={
+    id:Date.now().toString(36),date:ds,
+    scent1:m1,scent2:m2,drops1:d1,drops2:d2,
+    name:mixName,isExperiment:isExp,
+    created:Date.now()
+  };
+  experiments.push(exp);saveExperiments();
+  return exp;
+}
+
+/* Promote experiment to permanent scent */
+function promoteExperiment(expId){
+  const exp=experiments.find(e=>e.id===expId);if(!exp)return;
+  const name=exp.name||(exp.scent1+' & '+exp.scent2);
+  const totalDrops=exp.drops1+exp.drops2;
+  const totalMl=(exp.scent1?((SCENTS.find(s=>s.name===exp.scent1)||{}).ml||0.909)/2:0)+
+                (exp.scent2?((SCENTS.find(s=>s.name===exp.scent2)||{}).ml||0.909)/2:0);
+  if(SCENTS.find(s=>s.name===name)){toast('Duft "'+name+'" bereits vorhanden','red');return;}
+  SCENTS.push({name,uses:0,drops:totalDrops,ml:Math.round(totalMl*100)/100,
+    stock:0,usedBottles:0,rest:0,price100:0,price250:0,price1000:0,
+    isMix:true,components:[exp.scent1,exp.scent2]});
+  localStorage.setItem('aufguss_scents_custom',JSON.stringify(SCENTS));
+  toast('✓ "'+name+'" als fester Duft gespeichert');
+  renderEinstellungen();
+}
+
+/* Render experiments tab */
+function renderExperimente(){
+  const el=document.getElementById('exp-content');if(!el)return;
+  if(!experiments.length){
+    el.innerHTML='<div style="text-align:center;padding:30px;color:var(--text3)">'+
+      '<div style="font-size:36px;margin-bottom:10px">🧪</div>'+
+      '<div>Noch keine Experimente gespeichert</div>'+
+      '<div style="font-size:12px;margin-top:6px">Markiere beim Eingeben einen Slot als Experiment</div>'+
+    '</div>';return;
+  }
+  el.innerHTML=experiments.slice().reverse().map(exp=>{
+    const d=new Date(exp.created);
+    const alreadySaved=!!SCENTS.find(s=>s.name===(exp.name||(exp.scent1+' & '+exp.scent2)));
+    return '<div style="padding:12px 16px;border-bottom:1px solid var(--border)">'+
+      '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap">'+
+      '<div style="flex:1">'+
+        '<div style="font-size:13px;font-weight:700;margin-bottom:4px">'+
+          (exp.name||'Unbenanntes Experiment')+
+          (exp.isExperiment?' <span style="background:var(--amber-bg);color:var(--amber);border-radius:4px;font-size:10px;padding:1px 6px;font-weight:600">🧪 Experiment</span>':'')+
+        '</div>'+
+        '<div style="font-size:12px;color:var(--text2);margin-bottom:3px">'+
+          (exp.scent1?exp.scent1+' ('+exp.drops1+' Tr.)':'')+
+          (exp.scent1&&exp.scent2?' + ':'')+
+          (exp.scent2?exp.scent2+' ('+exp.drops2+' Tr.)':'')+
+        '</div>'+
+        '<div style="font-size:11px;color:var(--text3)">'+
+          d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'})+' · '+exp.date+
+        '</div>'+
+      '</div>'+
+      '<div style="display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap">'+
+        (!alreadySaved?'<button onclick="promoteExperiment(\''+exp.id+'\')" style="padding:4px 10px;background:var(--green-bg);border:1px solid rgba(22,163,74,.3);border-radius:6px;color:var(--green);font-size:11px;cursor:pointer;font-family:var(--font);font-weight:600">+ Als Duft speichern</button>':
+          '<span style="font-size:11px;color:var(--green);padding:4px 6px">✓ Gespeichert</span>')+
+        '<button onclick="delExperiment(\''+exp.id+'\')" class="sdel">&#10005;</button>'+
+      '</div></div></div>';
+  }).join('');
+}
+
+function delExperiment(id){
+  experiments=experiments.filter(e=>e.id!==id);
+  saveExperiments();renderExperimente();toast('✓ Entfernt');
+}
+
+/* ══════════════════════════════════════════════════════════════
+   DUFTBERATER ERWEITERUNG — Überraschungs-Generator
+══════════════════════════════════════════════════════════════ */
+
+const SEASONS = {
+  'Frühling': {months:[3,4,5], scents:['Lavendel','Blüte','Zitrus','Kräuter','Frisch'], emoji:'🌸'},
+  'Sommer':   {months:[6,7,8], scents:['Zitrus','Minze','Eukalyptus','Frisch','Blüte'], emoji:'☀️'},
+  'Herbst':   {months:[9,10,11],scents:['Holz','Harz','Kräuter','Gewürz','Wald'], emoji:'🍂'},
+  'Winter':   {months:[12,1,2],scents:['Nadel','Harz','Gewürz','Menthol','Holz'], emoji:'❄️'},
+};
+
+function getCurrentSeason(){
+  const m=new Date().getMonth()+1;
+  for(const[name,s] of Object.entries(SEASONS)){if(s.months.includes(m))return name;}
+  return 'Frühling';
+}
+
+function generateSurprise(){
+  const mode=document.getElementById('surp-mode').value;
+  const season=getCurrentSeason();
+  const available=SCENTS.filter(s=>{
+    const st=getStatus(s);
+    return st!=='inactive'&&st!=='kritisch'||['exempt'].includes(st)||
+           (st==='ok'||st==='niedrig');
+  });
+  if(available.length<2){
+    document.getElementById('surp-result').innerHTML=
+      '<div style="color:var(--red);font-size:13px">Nicht genug verfügbare Düfte im Lager</div>';
+    return;
+  }
+
+  let candidates=[...available];
+  let combo=[];
+
+  if(mode==='saison'){
+    const s=SEASONS[season];
+    const pref=candidates.filter(sc=>{
+      const n=SCENT_NOTES[sc.name];
+      return n&&s.scents.some(fam=>n.family===fam||n.mood.includes(fam.slice(0,4)));
+    });
+    candidates=pref.length>=2?pref:candidates;
+  } else if(mode==='kontrast'){
+    // Pick one from Kopfnote, one Herznote, one Basisnote
+    const K=candidates.filter(s=>SCENT_NOTES[s.name]&&SCENT_NOTES[s.name].note==='K');
+    const H=candidates.filter(s=>SCENT_NOTES[s.name]&&SCENT_NOTES[s.name].note==='H');
+    const B=candidates.filter(s=>SCENT_NOTES[s.name]&&SCENT_NOTES[s.name].note==='B');
+    if(K.length&&H.length&&B.length){
+      combo=[K[Math.floor(Math.random()*K.length)],
+             H[Math.floor(Math.random()*H.length)],
+             B[Math.floor(Math.random()*B.length)]];
+    }
+  }
+
+  if(!combo.length){
+    // Random 2-3 from candidates with harmony check
+    const shuffled=[...candidates].sort(()=>Math.random()-0.5);
+    combo=shuffled.slice(0,3);
+  }
+
+  const season_info=SEASONS[season];
+  const comboNames=combo.map(s=>s.name);
+
+  // Calculate harmony
+  let harmony=0;
+  combo.forEach(s=>{
+    const n=SCENT_NOTES[s.name];if(!n)return;
+    const matches=FMATCH[n.family]||[];
+    combo.forEach(other=>{
+      if(other.name===s.name)return;
+      const on=SCENT_NOTES[other.name];if(!on)return;
+      if(matches.includes(on.family))harmony++;
+    });
+  });
+  const maxH=combo.length*(combo.length-1);
+  const harmPct=maxH>0?Math.round(harmony/maxH*100):50;
+  const stars=harmPct>75?'⭐⭐⭐':harmPct>40?'⭐⭐':'⭐';
+
+  document.getElementById('surp-result').innerHTML=
+    '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px">'+
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">'+
+      '<div style="font-size:14px;font-weight:700">'+season_info.emoji+' '+season+'-Überraschung</div>'+
+      '<div style="font-size:16px">'+stars+' Harmonie '+harmPct+'%</div>'+
+    '</div>'+
+    combo.map(s=>{
+      const n=SCENT_NOTES[s.name];
+      const col=n?NCOLORS[n.note]:'var(--text2)';
+      return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">'+
+        '<span style="width:8px;height:8px;border-radius:50%;background:'+col+';display:inline-block;flex-shrink:0"></span>'+
+        '<span style="font-size:13px;font-weight:600;flex:1">'+s.name+'</span>'+
+        (n?'<span style="font-size:11px;color:'+col+'">'+NLABELS[n.note]+'</span>':'')+
+        '<span style="font-size:11px;color:var(--text3)">'+s.drops+' Tr.</span>'+
+      '</div>';
+    }).join('')+
+    '<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">'+
+      '<button onclick="applySurpriseToDay('+JSON.stringify(comboNames)+')" '+
+        'style="padding:7px 14px;background:var(--accent);border:none;border-radius:7px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font)">'+
+        '→ Heute übernehmen</button>'+
+      '<button onclick="generateSurprise()" '+
+        'style="padding:7px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;color:var(--text2);font-size:12px;cursor:pointer;font-family:var(--font)">'+
+        '🔄 Neu würfeln</button>'+
+    '</div></div>';
+}
+
+function applySurpriseToDay(names){
+  // Switch to Eingabe tab and pre-fill first available slot
+  showTab('eingabe',document.querySelector('.nb[onclick*="eingabe"]'));
+  setTimeout(()=>{
+    const d1=document.getElementById('r0-d1');
+    const d2=document.getElementById('r0-d2');
+    const d3=document.getElementById('r0-d3');
+    if(d1&&names[0]){d1.value=names[0];}
+    if(d2&&names[1]){d2.value=names[1];}
+    if(d3&&names[2]){try{d3.value=names[2];}catch(e){}}
+    toast('✓ Kombination in Slot 1 übernommen');
+  },200);
+}
+
+
 /* ══ INIT ══ */
 initTheme();tick();setInterval(tick,30000);
 renderLager();startAlert();initEingabe();initDienstplan();
@@ -1468,7 +2023,22 @@ function startRating(aufgussEntry){
     date:aufgussEntry.date,
     hour:aufgussEntry.hour,
     staff:aufgussEntry.staff,
-    scents:[aufgussEntry.d1,aufgussEntry.d2,aufgussEntry.d3].filter(Boolean),
+    scents:(()=>{
+      const raw=[];
+      // d1
+      if(aufgussEntry.mix1&&aufgussEntry.mix1.a&&aufgussEntry.mix1.b){
+        raw.push(aufgussEntry.mix1.a+' + '+aufgussEntry.mix1.b+' (Mischung)');
+      } else if(aufgussEntry.d1) raw.push(aufgussEntry.d1);
+      // d2
+      if(aufgussEntry.mix2&&aufgussEntry.mix2.a&&aufgussEntry.mix2.b){
+        raw.push(aufgussEntry.mix2.a+' + '+aufgussEntry.mix2.b+' (Mischung)');
+      } else if(aufgussEntry.d2) raw.push(aufgussEntry.d2);
+      // d3
+      if(aufgussEntry.mix3&&aufgussEntry.mix3.a&&aufgussEntry.mix3.b){
+        raw.push(aufgussEntry.mix3.a+' + '+aufgussEntry.mix3.b+' (Mischung)');
+      } else if(aufgussEntry.d3) raw.push(aufgussEntry.d3);
+      return raw.filter(Boolean);
+    })(),
     openAt,closeAt,
     ratingCount:0,
     created:now
@@ -1949,6 +2519,30 @@ function exportRatings(){
 
 
 
+
+function promptPromoteMix(entryId){
+  const e=entries.find(x=>x.id===entryId);if(!e)return;
+  const mixes=[];
+  [1,2,3].forEach(slot=>{
+    const m=e['mix'+slot];
+    if(m&&m.a&&m.b)mixes.push({name:m.a+' & '+m.b,scent1:m.a,scent2:m.b,drops1:m.da,drops2:m.db,id:'promo_'+Date.now()+'_'+slot});
+  });
+  if(!mixes.length){toast('Keine Mischung gefunden','red');return;}
+  mixes.forEach(mix=>{
+    const existName=prompt('Mischung "'+mix.scent1+' + '+mix.scent2+'" als fester Duft speichern?\nName:',mix.name);
+    if(existName===null)return;
+    if(SCENTS.find(s=>s.name===existName)){toast('"'+existName+'" bereits vorhanden','red');return;}
+    const ml1=(SCENTS.find(s=>s.name===mix.scent1)||{}).ml||0.909;
+    const ml2=(SCENTS.find(s=>s.name===mix.scent2)||{}).ml||0.909;
+    SCENTS.push({name:existName,uses:0,drops:mix.drops1+mix.drops2,
+      ml:Math.round((ml1/2+ml2/2)*100)/100,stock:0,usedBottles:0,rest:0,
+      price100:0,price250:0,price1000:0,isMix:true,
+      components:[mix.scent1,mix.scent2]});
+    localStorage.setItem('aufguss_scents_custom',JSON.stringify(SCENTS));
+    toast('✓ "'+existName+'" als Duft gespeichert');
+    renderLager();
+  });
+}
 function resetRatings(){
   if(!confirm('Alle Bewertungen löschen?'))return;
   localStorage.removeItem('aufguss_ratings');
