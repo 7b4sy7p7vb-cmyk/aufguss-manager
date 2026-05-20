@@ -2,8 +2,11 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aufguss Manager</title>
+<title>Aufguss Manager v202605201725</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -463,12 +466,22 @@ tr:hover td{background:var(--bg3)}
     <div class="acc-body" id="ab-combos"><div style="padding:12px 15px">
       <div class="ctrl" style="flex-wrap:wrap">
         <button class="chip ca" onclick="setComboF('alle',this)">Alle</button>
+        <div style="width:100%;font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin:4px 0 2px">Wirkung</div>
         <button class="chip" onclick="setComboF('Energetisierend',this)">&#9889; Energie</button>
         <button class="chip" onclick="setComboF('Beruhigend',this)">&#128164; Beruhigend</button>
         <button class="chip" onclick="setComboF('Heilend',this)">&#10024; Heilend</button>
         <button class="chip" onclick="setComboF('Romantisch',this)">&#10084; Romantisch</button>
         <button class="chip" onclick="setComboF('Meditativ',this)">&#9728; Meditativ</button>
         <button class="chip" onclick="setComboF('Gemütlich',this)">&#127968; Gem&uuml;tlich</button>
+        <div style="width:100%;font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin:4px 0 2px">Jahreszeit</div>
+        <button class="chip" onclick="setComboF('Frühling',this)">&#127800; Fr&uuml;hling</button>
+        <button class="chip" onclick="setComboF('Sommer',this)">&#9728; Sommer</button>
+        <button class="chip" onclick="setComboF('Herbst',this)">&#127810; Herbst</button>
+        <button class="chip" onclick="setComboF('Winter',this)">&#10052; Winter</button>
+        <div style="width:100%;font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin:4px 0 2px">Tageszeit</div>
+        <button class="chip" onclick="setComboF('Morgen',this)">&#127773; Morgen</button>
+        <button class="chip" onclick="setComboF('Mittag',this)">&#9728; Mittag</button>
+        <button class="chip" onclick="setComboF('Abend',this)">&#127750; Abend</button>
       </div>
       <div class="cg2" id="combo-grid"></div>
     </div></div>
@@ -484,8 +497,12 @@ tr:hover td{background:var(--bg3)}
       <div style="display:flex;gap:9px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
         <select id="surp-mode" style="padding:6px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:13px;font-family:var(--font);outline:none;-webkit-appearance:none">
           <option value="saison">&#127808; Saisonal (aktuell)</option>
-          <option value="kontrast">&#9654; Kopf + Herz + Basis</option>
-          <option value="zufall">&#127922; Zuf&auml;llig harmonisch</option>
+          <option value="morgen">&#127773; Morgenaufguss</option>
+          <option value="mittag">&#9728; Mittagsaufguss</option>
+          <option value="abend">&#127750; Abendaufguss</option>
+          <option value="kontrast">&#9889; Energie &amp; Kraft</option>
+          <option value="entspannung">&#128164; Entspannung &amp; Schlaf</option>
+          <option value="zufall">&#127922; Zuf&auml;llig</option>
         </select>
         <button onclick="generateSurprise()" style="padding:7px 16px;background:var(--accent);border:none;border-radius:7px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font)">&#127922; Generieren</button>
       </div>
@@ -748,7 +765,7 @@ const HISTORY={"2026-02-16": [{"h": 11, "staff": "Maik (7h)", "d1": "Zitrone ita
 const SCHEDULE_BASE={"2026-05-02": [{"name": "Tom", "start": "14:30", "availFrom": 15}, {"name": "Luca (8h)", "start": "08:00", "shift": "F1", "availFrom": 11}], "2026-05-06": [{"name": "Tom", "start": "10:30", "availFrom": 11}, {"name": "Sebastian", "start": "16:30", "availFrom": 17}, {"name": "Maik (7h)", "start": "15:00", "shift": "S3", "availFrom": 15}], "2026-05-07": [{"name": "Tom", "start": "10:30", "availFrom": 11}, {"name": "Jonathan", "start": "14:30", "availFrom": 15}, {"name": "Luca (8h)", "start": "14:00", "shift": "S1", "availFrom": 14}], "2026-05-10": [{"name": "Tom", "start": "10:30", "availFrom": 11}, {"name": "Luca (8h)", "start": "15:00", "shift": "S2", "availFrom": 15}], "2026-05-11": [{"name": "Tom", "start": "10:30", "availFrom": 11}, {"name": "Luca (8h)", "start": "14:00", "shift": "S1", "availFrom": 14}], "2026-05-08": [{"name": "Basti", "start": "17:30", "availFrom": 18}, {"name": "Erwin", "start": "14:30", "availFrom": 15}, {"name": "Jonathan", "start": "10:30", "availFrom": 11}, {"name": "Maik (7h)", "start": "15:00", "shift": "S3", "availFrom": 15}], "2026-05-13": [{"name": "Basti", "start": "15:30", "availFrom": 16}, {"name": "Luca (8h)", "start": "14:00", "shift": "S1", "availFrom": 14}, {"name": "Maik (7h)", "start": "08:00", "shift": "F3", "availFrom": 11}], "2026-05-16": [{"name": "Basti", "start": "14:30", "availFrom": 15}, {"name": "Luca (8h)", "start": "08:00", "shift": "F1", "availFrom": 11}], "2026-05-18": [{"name": "Basti", "start": "16:30", "availFrom": 17}, {"name": "Jonathan", "start": "13:30", "availFrom": 14}, {"name": "Luca (8h)", "start": "08:00", "shift": "F1", "availFrom": 11}], "2026-05-19": [{"name": "Basti", "start": "16:30", "availFrom": 17}, {"name": "Sebastian", "start": "16:30", "availFrom": 17}, {"name": "Luca (8h)", "start": "08:00", "shift": "F1", "availFrom": 11}, {"name": "Maik (7h)", "start": "15:00", "shift": "S3", "availFrom": 15}], "2026-05-21": [{"name": "Basti", "start": "13:30", "availFrom": 14}, {"name": "Maik (7h)", "start": "16:00", "shift": "S5", "availFrom": 16}], "2026-05-22": [{"name": "Basti", "start": "14:30", "availFrom": 15}, {"name": "Jonathan", "start": "10:30", "availFrom": 11}, {"name": "Luca (8h)", "start": "14:00", "shift": "S1", "availFrom": 14}], "2026-05-29": [{"name": "Basti", "start": "MSS", "availFrom": 11}, {"name": "Erwin", "start": "MSS", "availFrom": 11}, {"name": "Jonathan", "start": "MSS", "availFrom": 11}, {"name": "Maik (7h)", "start": "08:00", "shift": "F3", "availFrom": 11}], "2026-05-01": [{"name": "Erwin", "start": "17:30", "availFrom": 18}, {"name": "Jonathan", "start": "14:30", "availFrom": 15}, {"name": "Luca (8h)", "start": "08:00", "shift": "F1", "availFrom": 11}, {"name": "Maik (7h)", "start": "10:30", "shift": "F5", "availFrom": 11}], "2026-05-05": [{"name": "Erwin", "start": "19:30", "availFrom": 20}, {"name": "Maik (7h)", "start": "15:00", "shift": "S3", "availFrom": 15}], "2026-05-09": [{"name": "Erwin", "start": "10:30", "availFrom": 11}, {"name": "Jonathan", "start": "14:30", "availFrom": 15}, {"name": "Luca (8h)", "start": "15:00", "shift": "S2", "availFrom": 15}, {"name": "Maik (7h)", "start": "16:00", "shift": "S5", "availFrom": 16}], "2026-05-14": [{"name": "Erwin", "start": "13:30", "availFrom": 14}, {"name": "Sebastian", "start": "16:30", "availFrom": 17}, {"name": "Maik (7h)", "start": "08:00", "shift": "F3", "availFrom": 11}], "2026-05-15": [{"name": "Erwin", "start": "13:30", "availFrom": 14}, {"name": "Sebastian", "start": "16:30", "availFrom": 17}, {"name": "Luca (8h)", "start": "08:00", "shift": "F1", "availFrom": 11}, {"name": "Maik (7h)", "start": "08:00", "shift": "F3", "availFrom": 11}], "2026-05-24": [{"name": "Erwin", "start": "17:30", "availFrom": 18}, {"name": "Jonathan", "start": "14:30", "availFrom": 15}, {"name": "Luca (8h)", "start": "14:00", "shift": "S1", "availFrom": 14}, {"name": "Maik (7h)", "start": "08:00", "shift": "F3", "availFrom": 11}], "2026-05-25": [{"name": "Erwin", "start": "14:30", "availFrom": 15}, {"name": "Luca (8h)", "start": "14:00", "shift": "S1", "availFrom": 14}, {"name": "Maik (7h)", "start": "08:00", "shift": "F3", "availFrom": 11}], "2026-05-28": [{"name": "Erwin", "start": "15:30", "availFrom": 16}, {"name": "Maik (7h)", "start": "08:00", "shift": "F3", "availFrom": 11}], "2026-05-03": [{"name": "Jonathan", "start": "12:30", "availFrom": 13}, {"name": "Luca (8h)", "start": "08:00", "shift": "F1", "availFrom": 11}, {"name": "Maik (7h)", "start": "16:00", "shift": "S5", "availFrom": 16}], "2026-05-23": [{"name": "Jonathan", "start": "15:30", "availFrom": 16}, {"name": "Sebastian", "start": "10:30", "availFrom": 11}, {"name": "Luca (8h)", "start": "14:00", "shift": "S1", "availFrom": 14}, {"name": "Maik (7h)", "start": "08:00", "shift": "F3", "availFrom": 11}], "2026-05-27": [{"name": "Jonathan", "start": "10:30", "availFrom": 11}, {"name": "Luca (8h)", "start": "15:00", "shift": "S2", "availFrom": 15}], "2026-05-31": [{"name": "Jonathan", "start": "10:30", "availFrom": 11}, {"name": "Sebastian", "start": "15:30", "availFrom": 16}], "2026-05-04": [{"name": "Sebastian", "start": "16:30", "availFrom": 17}, {"name": "Luca (8h)", "start": "08:00", "shift": "F1", "availFrom": 11}, {"name": "Maik (7h)", "start": "13:00", "shift": "S4", "availFrom": 13}], "2026-05-12": [{"name": "Sebastian", "start": "16:30", "availFrom": 17}, {"name": "Luca (8h)", "start": "14:00", "shift": "S1", "availFrom": 14}, {"name": "Maik (7h)", "start": "08:00", "shift": "F3", "availFrom": 11}], "2026-05-26": [{"name": "Sebastian", "start": "16:30", "availFrom": 17}, {"name": "Luca (8h)", "start": "13:00", "shift": "S4", "availFrom": 13}], "2026-05-30": [{"name": "Sebastian", "start": "10:30", "availFrom": 11}], "2026-05-17": [{"name": "Luca (8h)", "start": "08:00", "shift": "F1", "availFrom": 11}, {"name": "Maik (7h)", "start": "13:00", "shift": "S4", "availFrom": 13}], "2026-05-20": [{"name": "Maik (7h)", "start": "15:00", "shift": "S3", "availFrom": 15}]};
 const SCENT_NOTES={"Orange süß italienisch": {"note": "K", "family": "Zitrus", "mood": "Frisch & Fröhlich"}, "Zitrone italinisch": {"note": "K", "family": "Zitrus", "mood": "Belebend"}, "Mandarine grün italienisch": {"note": "K", "family": "Zitrus", "mood": "Frisch & Leicht"}, "Mandarine rot italienisch": {"note": "K", "family": "Zitrus", "mood": "Warm & Fruchtig"}, "Mandarine rot italinenisch": {"note": "K", "family": "Zitrus", "mood": "Warm & Fruchtig"}, "Blutorange": {"note": "K", "family": "Zitrus", "mood": "Frisch & Fruchtig"}, "Grapefruit pink": {"note": "K", "family": "Zitrus", "mood": "Belebend & Frisch"}, "Tangerine": {"note": "K", "family": "Zitrus", "mood": "Fruchtig & Süß"}, "Bergamotte": {"note": "K", "family": "Zitrus", "mood": "Frisch & Elegant"}, "Citronella java": {"note": "K", "family": "Zitrus", "mood": "Frisch"}, "Lemonmyrte": {"note": "K", "family": "Zitrus", "mood": "Intensiv Zitronig"}, "Lemongras cochin": {"note": "K", "family": "Zitrus", "mood": "Frisch & Zitronig"}, "Litsea cubeba": {"note": "K", "family": "Zitrus", "mood": "Frisch & Fruchtig"}, "Limette destiliert": {"note": "K", "family": "Zitrus", "mood": "Frisch & Scharf"}, "Limette gepresst": {"note": "K", "family": "Zitrus", "mood": "Frisch & Fruchtig"}, "Orange bitter italiniwnisch": {"note": "K", "family": "Zitrus", "mood": "Herb & Frisch"}, "Minze indisch": {"note": "K", "family": "Minze", "mood": "Kühlend & Belebend"}, "Pfefferminze indisch": {"note": "K", "family": "Minze", "mood": "Intensiv Kühlend"}, "Krausminze": {"note": "K", "family": "Minze", "mood": "Mild Kühlend"}, "Bergamottenminze": {"note": "K", "family": "Minze", "mood": "Frisch & Blumig"}, "Minze chinesisch": {"note": "K", "family": "Minze", "mood": "Intensiv Kühlend"}, "Minze japanisch": {"note": "K", "family": "Minze", "mood": "Kühlend & Frisch"}, "Pfefferminze amerikanisch": {"note": "K", "family": "Minze", "mood": "Mild Kühlend"}, "Mentholkristalle": {"note": "K", "family": "Menthol", "mood": "Sehr Kühlend"}, "Menthol": {"note": "K", "family": "Menthol", "mood": "Kühlend"}, "Mentholsticks": {"note": "K", "family": "Menthol", "mood": "Kühlend"}, "Eukalyptus chinesisch": {"note": "K", "family": "Eukalyptus", "mood": "Atemwege & Kühlend"}, "Eukalyptus spanisch": {"note": "K", "family": "Eukalyptus", "mood": "Atemwege & Frisch"}, "Eukalyptus citriodora": {"note": "K", "family": "Eukalyptus", "mood": "Zitronig & Frisch"}, "Eukalyptus staigeriana": {"note": "K", "family": "Eukalyptus", "mood": "Mild & Frisch"}, "Niaouli": {"note": "K", "family": "Eukalyptus", "mood": "Atemwege & Klar"}, "Teebaum": {"note": "K", "family": "Eukalyptus", "mood": "Reinigend & Frisch"}, "Cajeput": {"note": "K", "family": "Eukalyptus", "mood": "Atemwege & Scharf"}, "Erkältung": {"note": "K", "family": "Mix", "mood": "Atemwege & Belebend"}, "Blue Ice": {"note": "K", "family": "Minze", "mood": "Sehr Kühlend"}, "Lavendel moldawisch": {"note": "H", "family": "Lavendel", "mood": "Entspannend & Beruhigend"}, "lavendel moldawisch": {"note": "H", "family": "Lavendel", "mood": "Entspannend & Beruhigend"}, "Lavendel Bulgarisch": {"note": "H", "family": "Lavendel", "mood": "Fein & Entspannend"}, "Lavandin super": {"note": "H", "family": "Lavendel", "mood": "Frisch & Entspannend"}, "lavandin super": {"note": "H", "family": "Lavendel", "mood": "Frisch & Entspannend"}, "Geranium ägyptisch": {"note": "H", "family": "Blüte", "mood": "Blumig & Ausgleichend"}, "Rose Mix": {"note": "H", "family": "Blüte", "mood": "Romantisch & Weich"}, "Ylang Ylang Cananga": {"note": "H", "family": "Blüte", "mood": "Sinnlich & Exotisch"}, "Neroli Mix": {"note": "H", "family": "Blüte", "mood": "Zart & Entspannend"}, "Lotus Mix": {"note": "H", "family": "Blüte", "mood": "Exotisch & Frisch"}, "Jasmin Mix": {"note": "H", "family": "Blüte", "mood": "Blumig & Sinnlich"}, "Veilchen Mix": {"note": "H", "family": "Blüte", "mood": "Zart & Pudrig"}, "Palmarosa ostindisch": {"note": "H", "family": "Blüte", "mood": "Rosenähnlich & Frisch"}, "Kamille blau": {"note": "H", "family": "Kräuter", "mood": "Beruhigend & Sanft"}, "Ringelblume": {"note": "H", "family": "Kräuter", "mood": "Blumig & Warm"}, "Rosmarin": {"note": "H", "family": "Kräuter", "mood": "Belebend & Klar"}, "Salbei": {"note": "H", "family": "Kräuter", "mood": "Reinigend & Kräuterig"}, "Thymian": {"note": "H", "family": "Kräuter", "mood": "Antiseptisch & Kräuterig"}, "Kümmel": {"note": "H", "family": "Kräuter", "mood": "Würzig & Warm"}, "Lorbeerblatt": {"note": "H", "family": "Kräuter", "mood": "Würzig & Edel"}, "Beifuß": {"note": "H", "family": "Kräuter", "mood": "Kräuterig & Herb"}, "Heiliger Basilikum": {"note": "H", "family": "Kräuter", "mood": "Belebend & Würzig"}, "Basilikum": {"note": "H", "family": "Kräuter", "mood": "Frisch & Würzig"}, "Melisse indikum": {"note": "H", "family": "Kräuter", "mood": "Beruhigend & Zitronig"}, "Dillkraut": {"note": "H", "family": "Kräuter", "mood": "Frisch & Würzig"}, "Fenchel süß": {"note": "H", "family": "Kräuter", "mood": "Süß & Würzig"}, "Curcuma": {"note": "H", "family": "Gewürz", "mood": "Warm & Würzig"}, "Ingwer": {"note": "H", "family": "Gewürz", "mood": "Warm & Scharf"}, "Cardamom": {"note": "H", "family": "Gewürz", "mood": "Warm & Exotisch"}, "Nelke": {"note": "H", "family": "Gewürz", "mood": "Warm & Würzig"}, "Fichtennadel": {"note": "H", "family": "Nadel", "mood": "Wald & Frisch"}, "Edeltannennadel": {"note": "H", "family": "Nadel", "mood": "Alpin & Frisch"}, "Zirbelkiefer": {"note": "H", "family": "Nadel", "mood": "Entspannend & Alpin"}, "Kiefernnadel": {"note": "H", "family": "Nadel", "mood": "Wald & Frisch"}, "Latschenkiefe tirol": {"note": "H", "family": "Nadel", "mood": "Alpin & Stark"}, "Cypresse": {"note": "H", "family": "Nadel", "mood": "Holzig & Frisch"}, "Thuja": {"note": "H", "family": "Nadel", "mood": "Wald & Herb"}, "Heublumen Mix": {"note": "H", "family": "Kräuter", "mood": "Sommerlich & Warm"}, "Frischer Wald": {"note": "H", "family": "Mix", "mood": "Wald & Frisch"}, "Harmony": {"note": "H", "family": "Mix", "mood": "Ausgleichend & Sanft"}, "Wintermärchen Mix": {"note": "H", "family": "Mix", "mood": "Weihnachtlich & Warm"}, "Advent Mix": {"note": "H", "family": "Mix", "mood": "Weihnachtlich & Würzig"}, "Kolanuss-Orange": {"note": "H", "family": "Mix", "mood": "Exotisch & Fruchtig"}, "Summermix": {"note": "H", "family": "Mix", "mood": "Sommerlich & Frisch"}, "Sommernachtstraum": {"note": "H", "family": "Mix", "mood": "Romantisch & Sommerlich"}, "Orientalischer Traum#": {"note": "H", "family": "Mix", "mood": "Exotisch & Sinnlich"}, "1001 Nach": {"note": "H", "family": "Mix", "mood": "Orientalisch & Warm"}, "Gewürzzauber": {"note": "H", "family": "Mix", "mood": "Würzig & Warm"}, "Petitgran südamerikanisch": {"note": "H", "family": "Holz", "mood": "Frisch & Holzig"}, "Elemi": {"note": "H", "family": "Harz", "mood": "Frisch & Zitronig"}, "rbm Nautilus Med": {"note": "H", "family": "Mix", "mood": "Meeresfrisch"}, "Wacholderholz": {"note": "B", "family": "Holz", "mood": "Wald & Frisch"}, "Cedernholz himalaya": {"note": "B", "family": "Holz", "mood": "Warm & Holzig"}, "Cedernholz Virginia": {"note": "B", "family": "Holz", "mood": "Bleistift & Warm"}, "Cedernholz amerikanisch": {"note": "B", "family": "Holz", "mood": "Warm & Trocken"}, "Cedernholz atlas": {"note": "B", "family": "Holz", "mood": "Warm & Rauchig"}, "Cedernholz chinesisch": {"note": "B", "family": "Holz", "mood": "Holzig & Herb"}, "Patchouli": {"note": "B", "family": "Holz", "mood": "Erdig & Intensiv"}, "Weihrauch": {"note": "B", "family": "Harz", "mood": "Meditativ & Tief"}, "Amyris (Sandelholz)": {"note": "B", "family": "Holz", "mood": "Warm & Cremig"}, "Vetiver": {"note": "B", "family": "Wurzel", "mood": "Erdig & Rauchig"}, "Hobaum": {"note": "B", "family": "Holz", "mood": "Holzig & Mild"}, "Wintergrün": {"note": "B", "family": "Harz", "mood": "Kühlend & Harzartig"}, "Kamille petigrain römisch": {"note": "B", "family": "Harz", "mood": "Erdig & Beruhigend"}, "Zimtblätter": {"note": "B", "family": "Gewürz", "mood": "Warm & Süßwürzig"}, "Zimtrinde": {"note": "B", "family": "Gewürz", "mood": "Intensiv & Süßwürzig"}, "Pfeffer schwarz": {"note": "B", "family": "Gewürz", "mood": "Scharf & Warm"}, "Sternanis": {"note": "B", "family": "Gewürz", "mood": "Süßwürzig & Warm"}, "Cassia chinesisch": {"note": "B", "family": "Gewürz", "mood": "Zimtartig & Warm"}, "Big Cinnamon": {"note": "B", "family": "Gewürz", "mood": "Intensiv Zimt"}, "Kampfer": {"note": "B", "family": "Harz", "mood": "Medizinisch & Kühlend"}};
 const FEIERTAGE_SA={"2025-01-01": "Neujahr", "2025-01-06": "Heilige Drei Könige", "2025-04-18": "Karfreitag", "2025-04-20": "Ostersonntag", "2025-04-21": "Ostermontag", "2025-05-01": "Tag der Arbeit", "2025-05-29": "Christi Himmelfahrt", "2025-06-08": "Pfingstsonntag", "2025-06-09": "Pfingstmontag", "2025-10-03": "Tag der Deutschen Einheit", "2025-10-31": "Reformationstag", "2025-12-25": "1. Weihnachtstag", "2025-12-26": "2. Weihnachtstag", "2026-01-01": "Neujahr", "2026-01-06": "Heilige Drei Könige", "2026-04-03": "Karfreitag", "2026-04-05": "Ostersonntag", "2026-04-06": "Ostermontag", "2026-05-01": "Tag der Arbeit", "2026-05-14": "Christi Himmelfahrt", "2026-05-24": "Pfingstsonntag", "2026-05-25": "Pfingstmontag", "2026-10-03": "Tag der Deutschen Einheit", "2026-10-31": "Reformationstag", "2026-12-25": "1. Weihnachtstag", "2026-12-26": "2. Weihnachtstag", "2027-01-01": "Neujahr", "2027-01-06": "Heilige Drei Könige", "2027-03-26": "Karfreitag", "2027-03-28": "Ostersonntag", "2027-03-29": "Ostermontag", "2027-05-01": "Tag der Arbeit", "2027-05-06": "Christi Himmelfahrt", "2027-05-16": "Pfingstsonntag", "2027-05-17": "Pfingstmontag", "2027-10-03": "Tag der Deutschen Einheit", "2027-10-31": "Reformationstag", "2027-12-25": "1. Weihnachtstag", "2027-12-26": "2. Weihnachtstag", "2028-01-01": "Neujahr", "2028-01-06": "Heilige Drei Könige", "2028-04-14": "Karfreitag", "2028-04-16": "Ostersonntag", "2028-04-17": "Ostermontag", "2028-05-01": "Tag der Arbeit", "2028-05-25": "Christi Himmelfahrt", "2028-06-04": "Pfingstsonntag", "2028-06-05": "Pfingstmontag", "2028-10-03": "Tag der Deutschen Einheit", "2028-10-31": "Reformationstag", "2028-12-25": "1. Weihnachtstag", "2028-12-26": "2. Weihnachtstag"};
-const COMBOS=[{"name": "Wald & Frische", "desc": "Klassischer Waldaufguss — belebend und klar", "scents": ["Eukalyptus chinesisch", "Fichtennadel", "Zirbelkiefer"], "effect": "Atemwege öffnen, Belebung", "mood": "Energetisierend"}, {"name": "Alpen-Wellness", "desc": "Alpines Bergfeeling — entspannend und tief", "scents": ["Edeltannennadel", "Lavendel moldawisch", "Cedernholz himalaya"], "effect": "Tiefe Entspannung, Stressabbau", "mood": "Beruhigend"}, {"name": "Zitrus-Power", "desc": "Frischer Wachmacher — ideal für den Morgen", "scents": ["Orange süß italienisch", "Zitrone italinisch", "Bergamotte"], "effect": "Stimmungsaufhellend, Belebung", "mood": "Energetisierend"}, {"name": "Orientalischer Traum", "desc": "Sinnlich und exotisch — für besondere Momente", "scents": ["Rose Mix", "Patchouli", "Ylang Ylang Cananga"], "effect": "Entspannung, Sinnlichkeit", "mood": "Romantisch"}, {"name": "Erkältungshelfer", "desc": "Medizinischer Aufguss — Atemwege frei", "scents": ["Eukalyptus spanisch", "Minze indisch", "Kampfer"], "effect": "Atemwege befreien", "mood": "Heilend"}, {"name": "Winterzauber", "desc": "Weihnachtliche Wärme — gemütlich und würzig", "scents": ["Zimtblätter", "Edeltannennadel", "Orange süß italienisch"], "effect": "Wärme, Geborgenheit", "mood": "Gemütlich"}, {"name": "Tiefe Entspannung", "desc": "Maximale Ruhe — für den Abend", "scents": ["Lavendel moldawisch", "Weihrauch", "Cedernholz himalaya"], "effect": "Schlaffördernd, Stressabbau", "mood": "Beruhigend"}, {"name": "Frühlings-Erwachen", "desc": "Blumig und leicht — wie eine Frühlingswiese", "scents": ["Geranium ägyptisch", "Bergamotte", "Lavandin super"], "effect": "Ausgleichend, harmonisierend", "mood": "Harmonisch"}, {"name": "Energie-Kick", "desc": "Für maximale Energie und Fokus", "scents": ["Pfefferminze indisch", "Rosmarin", "Zitrone italinisch"], "effect": "Konzentration, Belebung", "mood": "Energetisierend"}, {"name": "Sommer & Sonne", "desc": "Sommerlich fruchtig — leicht und fröhlich", "scents": ["Mandarine grün italienisch", "Blutorange", "Melisse indikum"], "effect": "Stimmungsaufhellend", "mood": "Fröhlich"}, {"name": "Meditation & Stille", "desc": "Tief und geerdet — für innere Ruhe", "scents": ["Weihrauch", "Patchouli", "Lavendel moldawisch"], "effect": "Meditation, innere Ruhe", "mood": "Meditativ"}, {"name": "Heuschnupfen & Atemwege", "desc": "Sanft befreiend für empfindliche Atemwege", "scents": ["Eukalyptus citriodora", "Lavendel moldawisch", "Teebaum"], "effect": "Sanfte Atemwegspflege", "mood": "Heilend"}, {"name": "Gewürz-Wärme", "desc": "Orientalisch-würzig und wärmend", "scents": ["Ingwer", "Cardamom", "Orange süß italienisch"], "effect": "Durchblutung, Wärme", "mood": "Warm & Einladend"}, {"name": "Waldspaziergang", "desc": "Erdiger Waldduft — natürlich und geerdet", "scents": ["Wacholderholz", "Fichtennadel", "Vetiver"], "effect": "Erdung, Naturverbundenheit", "mood": "Geerdet"}, {"name": "Blütentraum", "desc": "Zart blumig — sanft und verführerisch", "scents": ["Rose Mix", "Geranium ägyptisch", "Bergamotte"], "effect": "Harmonisierend, stimmungsaufhellend", "mood": "Romantisch"}];</script>
+const COMBOS=[{"name": "Fr\u00fchlingserwachen", "desc": "Frische Bl\u00fcten und Kr\u00e4uter wecken die Sinne", "scents": ["Lavendel Bulgarisch", "Bergamotte", "Rosmarin"], "mood": "Energetisierend", "effect": "Belebt und erfrischt", "reason": "Lavendel harmoniert mit Zitrusnoten der Bergamotte, Rosmarin gibt den energetischen Kick", "timeOfDay": "Morgen", "season": "Fr\u00fchling", "themeNames": ["Fr\u00fchlingsduft", "Fr\u00fchlingserwachen", "Fit in den Tag"]}, {"name": "Bl\u00fctenzauber", "desc": "Sanfte Bl\u00fcten in voller Harmonie", "scents": ["Lavandin super", "Geranium \u00e4gyptisch", "Ylang Ylang Cananga"], "mood": "Romantisch", "effect": "Sinnlich und entspannend", "reason": "Drei Bl\u00fctend\u00fcfte erg\u00e4nzen sich perfekt \u2014 von frisch \u00fcber floral bis exotisch", "timeOfDay": "Abend", "season": "Fr\u00fchling", "themeNames": ["Bl\u00fctenzauber", "Romantische Nacht", "Bl\u00fctentraum"]}, {"name": "Kr\u00e4uterwiese", "desc": "Frische Wiesenluft nach dem Regen", "scents": ["Pfefferminze indisch", "Rosmarin", "Zitrone italienisch"], "mood": "Energetisierend", "effect": "Klar und wach", "reason": "Minze und Rosmarin sind klassische Wachheitsd\u00fcfte, Zitrone hellt die Stimmung auf", "timeOfDay": "Morgen", "season": "Fr\u00fchling", "themeNames": ["Frische Brise", "Kr\u00e4utergarten", "Vitamin Bombe"]}, {"name": "Maibl\u00fcte", "desc": "Zartes Fr\u00fchlingserwachen", "scents": ["Lavendel moldawisch", "Bergamottenminze", "Palmarosa ostindisch"], "mood": "Harmonisch", "effect": "Ausgleichend und aufheiternd", "reason": "Weiche florale Basis mit frischer Minznote \u2014 perfekt ausgewogen", "timeOfDay": "Mittag", "season": "Fr\u00fchling", "themeNames": ["Fr\u00fchlingsduft", "Maibl\u00fcte", "Bl\u00fctenwiese"]}, {"name": "Kr\u00e4utergarten", "desc": "Mediterrane Kr\u00e4uter im Fr\u00fchling", "scents": ["Rosmarin", "Salbei", "Thymian"], "mood": "Heilend", "effect": "Reinigend und st\u00e4rkend", "reason": "Drei klassische Heilkr\u00e4uter aus dem Mittelmeerraum \u2014 antibakteriell und immunst\u00e4rkend", "timeOfDay": "Morgen", "season": "Fr\u00fchling", "themeNames": ["Kr\u00e4uterzauber", "Mediterran", "Heilender Aufguss"]}, {"name": "Sommerfrische", "desc": "Zitrusfrische an hei\u00dfen Tagen", "scents": ["Zitrone italienisch", "Orange s\u00fc\u00df italienisch", "Pfefferminze indisch"], "mood": "Energetisierend", "effect": "Erfrischend und belebend", "reason": "Zitrusd\u00fcfte sind nat\u00fcrliche Stimmungsaufheller, Minze k\u00fchlt die Sinne", "timeOfDay": "Mittag", "season": "Sommer", "themeNames": ["Vitamin Bombe", "Sommerfrische", "Fit in den Tag"]}, {"name": "Tropischer Traum", "desc": "Exotische Fr\u00fcchte unter Palmen", "scents": ["Mandarine rot italienisch", "Ylang Ylang Cananga", "Limette gepresst"], "mood": "Romantisch", "effect": "Entspannt und verf\u00fchrerisch", "reason": "Ylang Ylang ist das romantischste \u00d6l \u00fcberhaupt, Zitrusnoten machen es leicht und frisch", "timeOfDay": "Abend", "season": "Sommer", "themeNames": ["Tropischer Abend", "Exotisch", "Orientalischer Traum"]}, {"name": "Strandspaziergang", "desc": "Salzluft und Meeresfrische", "scents": ["Eukalyptus citriodora", "Zitrone italienisch", "Teebaum"], "mood": "Energetisierend", "effect": "Luftig und frei", "reason": "Eukalyptus citriodora hat einen nat\u00fcrlichen Zitronenduft \u2014 zusammen entsteht meeresfrische Atmosph\u00e4re", "timeOfDay": "Morgen", "season": "Sommer", "themeNames": ["Frische Brise", "Strandmorgen", "Meeresluft"]}, {"name": "Lemon Splash", "desc": "Spritzige Zitruskombination", "scents": ["Bergamotte", "Litsea cubeba", "Grapefruit pink"], "mood": "Energetisierend", "effect": "Euphorisierend und antidepressiv", "reason": "Alle drei \u00d6le heben nachweislich die Stimmung \u2014 eine der freudigsten Kombinationen", "timeOfDay": "Morgen", "season": "Sommer", "themeNames": ["Vitamin Bombe", "Sommerduft", "Gute Laune"]}, {"name": "Mediterrane Hitze", "desc": "S\u00fcdl\u00e4ndische W\u00e4rme und W\u00fcrze", "scents": ["Rosmarin", "Orange bitter italienisch", "Ingwer"], "mood": "Energetisierend", "effect": "W\u00e4rmend und aktivierend", "reason": "Ingwer verst\u00e4rkt die Durchblutung, Rosmarin aktiviert den Geist, Orange verbindet beides", "timeOfDay": "Mittag", "season": "Sommer", "themeNames": ["Mediterran", "Sommerfeeling", "Hei\u00df & Kalt"]}, {"name": "Lavendelnacht", "desc": "Warme Sommern\u00e4chte im Lavendelfeld", "scents": ["Lavendel Bulgarisch", "Petitgrain s\u00fcdamerikanisch", "Bergamotte"], "mood": "Beruhigend", "effect": "Schl\u00e4frig und tiefenentspannt", "reason": "Die ber\u00fchmteste Entspannungskombination \u2014 klinisch belegt schlaff\u00f6rdernd", "timeOfDay": "Abend", "season": "Sommer", "themeNames": ["Ruhiger Abschluss", "Lavendelnacht", "Gute Nacht"]}, {"name": "Goldener Herbst", "desc": "W\u00fcrzige W\u00e4rme des Herbstes", "scents": ["Zirbelkiefer", "Wacholderholz", "Orange s\u00fc\u00df italienisch"], "mood": "Gem\u00fctlich", "effect": "W\u00e4rmend und geborgen", "reason": "Holznoten schaffen W\u00e4rme, Orange bringt Lebensfreude \u2014 wie ein Herbstnachmittag", "timeOfDay": "Mittag", "season": "Herbst", "themeNames": ["Herbststimmung", "Goldener Oktober", "Fr\u00fchlingswald"]}, {"name": "Waldspaziergang", "desc": "Tiefer Wald nach dem Regen", "scents": ["Fichtennadel", "Zirbelkiefer", "Wacholderholz"], "mood": "Meditativ", "effect": "Geerdet und zentriert", "reason": "Alle drei sind Wald\u00f6le die Phytonzide freisetzen \u2014 wie ein echter Waldgang", "timeOfDay": "Mittag", "season": "Herbst", "themeNames": ["Waldspaziergang", "Fr\u00fchlingswald", "Klangreise"]}, {"name": "Zimt & Gew\u00fcrz", "desc": "Orientalische Gew\u00fcrzk\u00fcche", "scents": ["Zimtbl\u00e4tter", "Nelke", "Orange s\u00fc\u00df italienisch"], "mood": "Gem\u00fctlich", "effect": "Warm und einladend", "reason": "Klassische Weihnachtsgew\u00fcrze \u2014 emotionale W\u00e4rme und Geborgenheit", "timeOfDay": "Abend", "season": "Herbst", "themeNames": ["Herbstgew\u00fcrz", "Big Cinnamon", "Advent MIX"]}, {"name": "Tannenzauber", "desc": "Wald und frische Herbstluft", "scents": ["Edeltannennadel", "Zirbelkiefer", "Wacholderbeere"], "mood": "Energetisierend", "effect": "Atemwege reinigen, Geist sch\u00e4rfen", "reason": "Nadel\u00f6le sind die st\u00e4rksten nat\u00fcrlichen Luftreiniger und Atemwegs\u00f6ffner", "timeOfDay": "Morgen", "season": "Herbst", "themeNames": ["Waldmorgen", "Frischer Wald", "Fit in den Tag"]}, {"name": "Sandelholz & Rose", "desc": "Tiefe W\u00e4rme und Eleganz", "scents": ["Amyris (Westindisches Sandelholz)", "Palmarosa ostindisch", "Geranium \u00e4gyptisch"], "mood": "Romantisch", "effect": "Sinnlich und tief entspannt", "reason": "Sandelholz ist das erdendste \u00d6l \u2014 mit Palmarosa entsteht eine rosige Tiefe", "timeOfDay": "Abend", "season": "Herbst", "themeNames": ["Sandelholzabend", "Romantische Nacht", "Bl\u00fctenzauber"]}, {"name": "Herbstwald", "desc": "Moos, Erde und reife Fr\u00fcchte", "scents": ["Vetiver", "Patchouli", "Mandarine rot italienisch"], "mood": "Meditativ", "effect": "Tiefgeerdet und meditativ", "reason": "Vetiver und Patchouli sind die tiefsten Basisnoten \u2014 Mandarine hebt sie ins Bewusstsein", "timeOfDay": "Abend", "season": "Herbst", "themeNames": ["Herbststimmung", "Waldmeditaion", "Klangreise"]}, {"name": "Winterzauber", "desc": "Klare Winterluft und Nadelw\u00e4lder", "scents": ["Latschenkiefer tirol", "Eukalyptus spanisch", "Pfefferminze amerikanisch"], "mood": "Energetisierend", "effect": "Atemwege weit \u00f6ffnen", "reason": "Die st\u00e4rkste Atemwegs-Kombination \u2014 ideal bei K\u00e4lte und verschnupfter Nase", "timeOfDay": "Morgen", "season": "Winter", "themeNames": ["Winterzauber", "Erk\u00e4ltungsschutz", "Hei\u00df & Kalt"]}, {"name": "Adventszeit", "desc": "Weihnachtsmarkt und Gl\u00fchweinduft", "scents": ["Zimtrinde", "Nelke", "Cardamom"], "mood": "Gem\u00fctlich", "effect": "Festlich und w\u00e4rmend", "reason": "Die drei Gew\u00fcrze des Gl\u00fchweins \u2014 bringt sofort Weihnachtsstimmung", "timeOfDay": "Abend", "season": "Winter", "themeNames": ["Advent MIX", "Winterzauber", "Weihnachtsduft"]}, {"name": "Eisklarer Morgen", "desc": "Frischer Wintermorgen", "scents": ["Pfefferminze amerikanisch", "Eukalyptus chinesisch", "Zitrone italienisch"], "mood": "Energetisierend", "effect": "Wach und klar wie frischer Schnee", "reason": "K\u00fchlende \u00d6le die trotzdem Energie geben \u2014 perfekt f\u00fcr den Wintermorgen", "timeOfDay": "Morgen", "season": "Winter", "themeNames": ["Frische Brise", "Wintermorgen", "Fit in den Tag"]}, {"name": "Weihrauch & Myrrhe", "desc": "Tiefe winterliche Meditation", "scents": ["Weihrauch", "Elemi", "Patchouli"], "mood": "Meditativ", "effect": "Spirituell und tiefenentspannend", "reason": "Weihrauch wird seit Jahrtausenden zur Meditation verwendet \u2014 Elemi verst\u00e4rkt die Wirkung", "timeOfDay": "Abend", "season": "Winter", "themeNames": ["Klangreise", "Wintermeditation", "Ruhiger Abschluss"]}, {"name": "Polarluft", "desc": "Arktische Frische", "scents": ["Krauseminze", "Eukalyptus staigeriana", "Latschenkiefer tirol"], "mood": "Energetisierend", "effect": "Extremes Frischegef\u00fchl", "reason": "Die k\u00e4ltesten \u00d6le kombiniert \u2014 ein eiskaltes Erlebnis das belebt", "timeOfDay": "Mittag", "season": "Winter", "themeNames": ["Hei\u00df & Kalt", "Polarduft", "\u00dcberraschung"]}, {"name": "Guten Morgen", "desc": "Sanfter Start in den Tag", "scents": ["Bergamotte", "Rosmarin", "Pfefferminze indisch"], "mood": "Energetisierend", "effect": "Sanft aber wach", "reason": "Bergamotte weckt die Stimmung, Rosmarin den Geist, Minze den K\u00f6rper", "timeOfDay": "Morgen", "season": "Alle", "themeNames": ["Fit in den Tag", "Guten Morgen", "Frische Brise"]}, {"name": "Morgenmeditation", "desc": "Ruhiger fokussierter Tagesstart", "scents": ["Weihrauch", "Lavendel Bulgarisch", "Zitrone italienisch"], "mood": "Meditativ", "effect": "Fokussiert und zentriert", "reason": "Weihrauch f\u00f6rdert Fokus, Lavendel Ruhe, Zitrone Klarheit \u2014 perfekte Balance", "timeOfDay": "Morgen", "season": "Alle", "themeNames": ["Morgenmeditation", "Klangreise", "Fit in den Tag"]}, {"name": "Energieboost", "desc": "Power f\u00fcr den ganzen Tag", "scents": ["Ingwer", "Pfefferminze amerikanisch", "Zitrone italienisch"], "mood": "Energetisierend", "effect": "Maximale Energie und Konzentration", "reason": "Ingwer und Minze sind die st\u00e4rksten Energiespender \u2014 Zitrone erh\u00f6ht die Konzentration", "timeOfDay": "Morgen", "season": "Alle", "themeNames": ["Energieboost", "Vitamin Bombe", "Fit in den Tag"]}, {"name": "Mittagspause", "desc": "Kurze Erholung in der Tagesmitte", "scents": ["Lavandin super", "Bergamottenminze", "Orange s\u00fc\u00df italienisch"], "mood": "Beruhigend", "effect": "Kurz abschalten und neue Kraft sch\u00f6pfen", "reason": "Leichte florale Noten die entspannen ohne einzuschl\u00e4fern", "timeOfDay": "Mittag", "season": "Alle", "themeNames": ["Mittagserholung", "Fr\u00fchlingsduft", "\u00dcberraschung"]}, {"name": "Klarheit", "desc": "Fokus und Konzentration", "scents": ["Rosmarin", "Pfefferminze indisch", "Zitrone italienisch"], "mood": "Energetisierend", "effect": "Maximale geistige Klarheit", "reason": "Rosmarin verbessert nachweislich das Ged\u00e4chtnis, Minze die Wachheit", "timeOfDay": "Mittag", "season": "Alle", "themeNames": ["Klarheit", "\u00dcberraschung", "Frische Brise"]}, {"name": "Feierabend", "desc": "Der Tag klingt aus", "scents": ["Lavendel Bulgarisch", "Palmarosa ostindisch", "Vetiver"], "mood": "Beruhigend", "effect": "Loslassen und abschalten", "reason": "Lavendel + Palmarosa + Vetiver ist die klassischste Entspannungskombination", "timeOfDay": "Abend", "season": "Alle", "themeNames": ["Ruhiger Abschluss", "Feierabend", "Entspannung"]}, {"name": "Mondlicht", "desc": "Tiefe Nachtentspannung", "scents": ["Sandelholz", "Lavendel Bulgarisch", "Ylang Ylang Cananga"], "mood": "Romantisch", "effect": "Tiefste Entspannung und Schlafvorbereitung", "reason": "Sandelholz verlangsamt die Atmung, Lavendel beruhigt, Ylang Ylang senkt den Blutdruck", "timeOfDay": "Abend", "season": "Alle", "themeNames": ["Ruhiger Abschluss", "Mondlicht", "Gute Nacht"]}, {"name": "Abendstille", "desc": "Innere Ruhe finden", "scents": ["Weihrauch", "Lavandin super", "Zirbelkiefer"], "mood": "Meditativ", "effect": "Tiefe innere Ruhe", "reason": "Alle drei f\u00f6rdern tiefes Atmen und Loslassen \u2014 ideal vor dem Schlafen", "timeOfDay": "Abend", "season": "Alle", "themeNames": ["Klangreise", "Abendstille", "Ruhiger Abschluss"]}, {"name": "Erk\u00e4ltungsschutz", "desc": "St\u00e4rkt das Immunsystem", "scents": ["Eukalyptus spanisch", "Teebaum", "Zitrone italienisch"], "mood": "Heilend", "effect": "Antibakteriell und immunst\u00e4rkend", "reason": "Teebaum ist das st\u00e4rkste nat\u00fcrliche Antibiotikum, Eukalyptus \u00f6ffnet die Atemwege", "timeOfDay": "Morgen", "season": "Winter", "themeNames": ["Erk\u00e4ltungsschutz", "Winterzauber", "Hei\u00df & Kalt"]}, {"name": "Atemwege frei", "desc": "F\u00fcr tiefes freies Atmen", "scents": ["Latschenkiefer tirol", "Eukalyptus chinesisch", "Pfefferminze amerikanisch"], "mood": "Heilend", "effect": "Atemwege \u00f6ffnen und reinigen", "reason": "Die drei st\u00e4rksten Atemwegs\u00f6ffner in einer Kombination", "timeOfDay": "Morgen", "season": "Winter", "themeNames": ["Atemfrei", "Wintermorgen", "\u00dcberraschung"]}, {"name": "Muskelrelax", "desc": "Entspannung f\u00fcr m\u00fcde Muskeln", "scents": ["Latschenkiefer tirol", "Rosmarin", "Ingwer"], "mood": "Heilend", "effect": "Durchblutungsf\u00f6rdernd und muskelentspannend", "reason": "Latsche und Ingwer f\u00f6rdern die Durchblutung, Rosmarin l\u00f6st Verspannungen", "timeOfDay": "Abend", "season": "Alle", "themeNames": ["Muskelrelax", "Sportaufguss", "Regeneration"]}, {"name": "Stressabbau", "desc": "Nervensystem beruhigen", "scents": ["Lavendel Bulgarisch", "Bergamotte", "Ylang Ylang Cananga"], "mood": "Heilend", "effect": "Cortisol senken und Nervensystem beruhigen", "reason": "Diese Kombination senkt nachweislich Blutdruck und Stresshormone", "timeOfDay": "Abend", "season": "Alle", "themeNames": ["Stressabbau", "Ruhiger Abschluss", "Entspannung"]}, {"name": "Morgenpower", "desc": "Maximaler Energiestart", "scents": ["Pfefferminze amerikanisch", "Rosmarin", "Grapefruit pink"], "mood": "Energetisierend", "effect": "Sofortige Aktivierung aller Sinne", "reason": "Grapefruit aktiviert das Nervensystem, Rosmarin den Geist, Minze den K\u00f6rper", "timeOfDay": "Morgen", "season": "Alle", "themeNames": ["Morgenpower", "Fit in den Tag", "Vitamin Bombe"]}, {"name": "Konzentration", "desc": "Geistiger Fokus und Klarheit", "scents": ["Rosmarin", "Zitrone italienisch", "Basilikum"], "mood": "Energetisierend", "effect": "Ged\u00e4chtnis und Konzentration verbessern", "reason": "Rosmarin ist scientifisch belegt f\u00fcr Ged\u00e4chtnisverbesserung", "timeOfDay": "Morgen", "season": "Alle", "themeNames": ["Konzentration", "Frische Brise", "\u00dcberraschung"]}, {"name": "Rosentraum", "desc": "Floraler Liebesduft", "scents": ["Geranium \u00e4gyptisch", "Ylang Ylang Cananga", "Bergamotte"], "mood": "Romantisch", "effect": "Stimmungsaufhellend und sinnlich", "reason": "Ylang Ylang ist bekannt f\u00fcr aphrodisische Wirkung, Geranium ausgleichend", "timeOfDay": "Abend", "season": "Fr\u00fchling", "themeNames": ["Rosentraum", "Bl\u00fctenzauber", "Romantische Nacht"]}, {"name": "Verf\u00fchrung", "desc": "Tiefe sinnliche W\u00e4rme", "scents": ["Patchouli", "Ylang Ylang Cananga", "Mandarine rot italienisch"], "mood": "Romantisch", "effect": "Sinnlich und anziehend", "reason": "Patchouli ist eines der sinnlichsten \u00d6le, Ylang Ylang verst\u00e4rkt die Wirkung", "timeOfDay": "Abend", "season": "Herbst", "themeNames": ["Verf\u00fchrung", "Orientalischer Traum", "Exotisch"]}, {"name": "Tiefe Stille", "desc": "Absolute innere Ruhe", "scents": ["Weihrauch", "Vetiver", "Sandelholz"], "mood": "Meditativ", "effect": "Tiefste Meditation m\u00f6glich", "reason": "Diese drei Basisnoten sind die heiligsten Meditations\u00f6le der Welt", "timeOfDay": "Abend", "season": "Alle", "themeNames": ["Klangreise", "Tiefe Stille", "Abendstille"]}, {"name": "Klangzauber", "desc": "F\u00fcr die Klangschalenzeremonie", "scents": ["Weihrauch", "Lavendel Bulgarisch", "Zirbelkiefer"], "mood": "Meditativ", "effect": "Spirituelle Tiefe und Verbundenheit", "reason": "Weihrauch und Zirbe \u00f6ffnen die Sinne f\u00fcr Klang und Schwingung", "timeOfDay": "Abend", "season": "Alle", "themeNames": ["Klangreise", "Klangzauber", "Meditationsaufguss"]}];</script>
 <script>/* ══ THEME ══ */
 function initTheme(){const t=localStorage.getItem('aufguss_theme')||'light';document.documentElement.setAttribute('data-theme',t);document.getElementById('theme-btn').textContent=t==='dark'?'☀️ Hell':'🌙 Dunkel';}
 function toggleTheme(){const c=document.documentElement.getAttribute('data-theme')||'light';const n=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('aufguss_theme',n);document.getElementById('theme-btn').textContent=n==='dark'?'☀️ Hell':'🌙 Dunkel';}
@@ -1589,15 +1606,56 @@ function renderNoteTable(){
   document.getElementById('note-body').innerHTML=data.map(s=>{const n=SCENT_NOTES[s.name];const col=NCOLORS[n.note]||'var(--text2)';const matches=(FMATCH[n.family]||[]).slice(0,3).join(', ');return`<tr><td class="tn"><span class="nd" style="background:${col}"></span>${s.name}</td><td><span class="badge" style="background:${col}22;color:${col}">${NLABELS[n.note]}</span></td><td style="font-size:12px;color:var(--text2)">${n.family}</td><td style="font-size:12px;color:var(--text2)">${n.mood}</td><td class="r tm">~${Math.round(s.uses/3.5*10)/10}x</td><td style="font-size:11px;color:var(--text3)">${matches}</td></tr>`;}).join('');
 }
 function renderCombos(){
-  const filtered=COMBOS.filter(c=>comboF==='alle'||c.mood===comboF);
-  const mc={'Energetisierend':'#d97706','Beruhigend':'#2563eb','Heilend':'#16a34a','Romantisch':'#db2777','Meditativ':'#7c3aed','Gemütlich':'#ea580c','Fröhlich':'#d97706','Geerdet':'#7c3aed','Harmonisch':'#16a34a','Warm & Einladend':'#ea580c'};
+  const modeFilter=comboF;
+  const filtered=COMBOS.filter(c=>{
+    if(modeFilter==='alle')return true;
+    if(['Energetisierend','Beruhigend','Heilend','Romantisch','Meditativ','Gem\u00fctlich'].includes(modeFilter))
+      return c.mood===modeFilter;
+    if(['Fr\u00fchling','Sommer','Herbst','Winter'].includes(modeFilter))
+      return c.season===modeFilter||c.season==='Alle';
+    if(['Morgen','Mittag','Abend'].includes(modeFilter))
+      return c.timeOfDay===modeFilter||c.timeOfDay==='Alle';
+    return true;
+  });
+  const MC={'Energetisierend':'#d97706','Beruhigend':'#2563eb','Heilend':'#16a34a','Romantisch':'#db2777','Meditativ':'#7c3aed','Gem\u00fctlich':'#ea580c','Harmonisch':'#16a34a'};
+  const SI={'Fr\u00fchling':'&#127800;','Sommer':'&#9728;','Herbst':'&#127810;','Winter':'&#10052;','Alle':'&#127744;'};
+  const TI={'Morgen':'&#127773;','Mittag':'&#9728;','Abend':'&#127750;','Alle':'&#128338;'};
   document.getElementById('combo-grid').innerHTML=filtered.map(c=>{
-    const si=c.scents.map(name=>{const sc=SCENTS.find(s=>s.name===name);const n=SCENT_NOTES[name];return{name,avail:sc&&getStatus(sc)!=='inactive',col:n?NCOLORS[n.note]:'var(--text3)',noteLbl:n?NLABELS[n.note]:''};});
-    const allA=si.every(s=>s.avail);const mc2=mc[c.mood]||'var(--text2)';
-    const sh=si.map(s=>`<div style="display:flex;align-items:center;gap:5px;padding:3px 0;border-bottom:1px solid var(--border)"><span class="nd" style="background:${s.col}"></span><span style="flex:1;font-size:12px;${!s.avail?'color:var(--text3);text-decoration:line-through':''}">${s.name}</span><span style="font-size:10px;color:${s.col}">${s.noteLbl}</span></div>`).join('');
-    return`<div class="cc"><div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px"><div style="font-size:13px;font-weight:700">${c.name}</div><span style="background:${mc2}22;color:${mc2};border-radius:10px;font-size:10px;padding:2px 7px;font-weight:600">${c.mood}</span></div><div style="font-size:11px;color:var(--text2);margin-bottom:7px">${c.desc}</div>${sh}<div style="margin-top:7px;font-size:11px;color:${allA?'var(--green)':'var(--amber)'}">🎯 ${c.effect} · ${allA?'✓ Alle verfügbar':'⚠ Nicht alle verfügbar'}</div></div>`;
+    const si=c.scents.map(name=>{
+      const sc=SCENTS.find(s=>s.name===name);
+      const n=SCENT_NOTES[name];
+      const avail=sc&&getStatus(sc)!=='inactive';
+      return {name,avail,col:n?NCOLORS[n.note]:'var(--text3)',noteLbl:n?NLABELS[n.note]:''};
+    });
+    const allA=si.every(s=>s.avail);
+    const mc=MC[c.mood]||'var(--text2)';
+    const rows=si.map(s=>
+      '<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--border)">'+
+      '<span style="width:8px;height:8px;border-radius:50%;background:'+s.col+';display:inline-block;flex-shrink:0"></span>'+
+      '<span style="flex:1;font-size:12px;'+(s.avail?'':'color:var(--text3);text-decoration:line-through')+'">'+
+      (s.avail?'':'&#10060; ')+s.name+'</span>'+
+      (s.noteLbl?'<span style="font-size:10px;color:'+s.col+'">'+s.noteLbl+'</span>':'')+
+      '</div>'
+    ).join('');
+    const themes=(c.themeNames||[]).map(t=>'<span style="font-size:9px;background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:1px 5px;color:var(--text3)">'+t+'</span>').join(' ');
+    return '<div class="cc">'+
+      '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:5px;gap:6px">'+
+        '<div><div style="font-size:13px;font-weight:700">'+c.name+'</div>'+
+        '<div style="font-size:11px;color:var(--text2);margin-top:1px">'+c.desc+'</div></div>'+
+        '<span style="background:'+mc+'22;color:'+mc+';border-radius:8px;font-size:10px;padding:2px 7px;font-weight:600;white-space:nowrap">'+c.mood+'</span>'+
+      '</div>'+rows+
+      '<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;align-items:center">'+
+        '<span style="font-size:11px">'+(SI[c.season]||'')+' '+c.season+'</span>'+
+        '<span style="font-size:11px;color:var(--text2)">'+(TI[c.timeOfDay]||'')+' '+c.timeOfDay+'</span>'+
+        '<span style="font-size:11px;color:'+(allA?'var(--green)':'var(--amber)')+'">'+
+          (allA?'&#10003; Alle verf\u00fcgbar':'&#9888; Nicht alle verf\u00fcgbar')+'</span>'+
+      '</div>'+
+      (c.reason?'<div style="margin-top:5px;font-size:10px;color:var(--text3);font-style:italic;border-top:1px solid var(--border);padding-top:4px">&#128161; '+c.reason+'</div>':'')+
+      (themes?'<div style="margin-top:5px;display:flex;gap:3px;flex-wrap:wrap">'+themes+'</div>':'')+
+    '</div>';
   }).join('');
 }
+
 function checkCombo(){
   const d1=document.getElementById('ck-d1').value;const d2=document.getElementById('ck-d2').value;const d3=document.getElementById('ck-d3').value;
   const sel=[d1,d2,d3].filter(Boolean);const el=document.getElementById('combo-result');
@@ -1660,8 +1718,81 @@ function rmVac(name,i){VACATIONS[name].splice(i,1);if(!VACATIONS[name].length)de
 function changePin(){const n1=document.getElementById('pin-1').value;const n2=document.getElementById('pin-2').value;if(n1.length!==4||!/^\d{4}$/.test(n1)){toast('PIN muss 4 Ziffern haben','red');return;}if(n1!==n2){toast('PINs stimmen nicht überein','red');return;}localStorage.setItem('aufguss_pin',n1);document.getElementById('pin-1').value='';document.getElementById('pin-2').value='';toast('✓ PIN geändert');}
 
 /* Export/Import */
-function exportData(){const data={version:3,exportDate:new Date().toISOString(),entries,stockOverrides:stockOvr,extraSlots,scents_custom:SCENTS,staff_custom:STAFF_CUSTOM,schedule:SCHEDULE,vacations:VACATIONS};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;const d=new Date();a.download=`aufguss_${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}.json`;a.click();URL.revokeObjectURL(url);toast('✓ Export abgeschlossen');}
-function importData(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=function(e){try{const d=JSON.parse(e.target.result);if(d.entries){entries=d.entries;localStorage.setItem('aufguss_v2',JSON.stringify(entries));}if(d.stockOverrides){stockOvr=d.stockOverrides;localStorage.setItem('aufguss_stock',JSON.stringify(stockOvr));}if(d.extraSlots){extraSlots=d.extraSlots;localStorage.setItem('aufguss_extra',JSON.stringify(extraSlots));}if(d.scents_custom){SCENTS=d.scents_custom;localStorage.setItem('aufguss_scents_custom',JSON.stringify(SCENTS));}if(d.staff_custom){STAFF_CUSTOM.length=0;d.staff_custom.forEach(s=>STAFF_CUSTOM.push(s));localStorage.setItem('aufguss_staff',JSON.stringify(STAFF_CUSTOM));}if(d.schedule){Object.assign(SCHEDULE,d.schedule);localStorage.setItem('aufguss_schedule',JSON.stringify(SCHEDULE));}if(d.vacations){Object.assign(VACATIONS,d.vacations);localStorage.setItem('aufguss_vacations',JSON.stringify(VACATIONS));}toast('✓ Import erfolgreich');renderLager();buildDay();}catch(err){toast('✗ Import fehlgeschlagen','red');}};r.readAsText(f);ev.target.value='';}
+function exportData(){
+  const data={
+    version:4,
+    exportDate:new Date().toISOString(),
+    entries,
+    stockOverrides:stockOvr,
+    extraSlots,
+    scents_custom:SCENTS,
+    staff_custom:STAFF_CUSTOM,
+    schedule:SCHEDULE,
+    vacations:VACATIONS,
+    experiments,
+    ratings:JSON.parse(localStorage.getItem('aufguss_ratings')||'[]'),
+    shift_notes:JSON.parse(localStorage.getItem('aufguss_shift_notes')||'[]'),
+    suppliers:JSON.parse(localStorage.getItem('aufguss_suppliers')||'null'),
+    themes:JSON.parse(localStorage.getItem('aufguss_themes')||'null')
+  };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  const d=new Date();
+  a.download='aufguss_'+d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0')+'.json';
+  a.style.display='none';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},100);
+  toast('✓ Export abgeschlossen');
+}
+function importData(ev){
+  const f=ev&&ev.target&&ev.target.files?ev.target.files[0]:null;
+  if(!f){toast('Keine Datei ausgewählt','red');return;}
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const d=JSON.parse(e.target.result);
+      let count=0;
+      if(d.entries&&Array.isArray(d.entries)){
+        entries=d.entries;
+        localStorage.setItem('aufguss_v2',JSON.stringify(entries));
+        count+=entries.length;
+      }
+      if(d.stockOverrides){stockOvr=d.stockOverrides;localStorage.setItem('aufguss_stock',JSON.stringify(stockOvr));}
+      if(d.extraSlots){extraSlots=d.extraSlots;localStorage.setItem('aufguss_extra',JSON.stringify(extraSlots));}
+      if(d.scents_custom&&Array.isArray(d.scents_custom)){
+        SCENTS=d.scents_custom;
+        localStorage.setItem('aufguss_scents_custom',JSON.stringify(SCENTS));
+      }
+      if(d.staff_custom&&Array.isArray(d.staff_custom)){
+        STAFF_CUSTOM.length=0;
+        d.staff_custom.forEach(s=>STAFF_CUSTOM.push(s));
+        localStorage.setItem('aufguss_staff',JSON.stringify(STAFF_CUSTOM));
+      }
+      if(d.schedule){Object.assign(SCHEDULE,d.schedule);localStorage.setItem('aufguss_schedule',JSON.stringify(SCHEDULE));}
+      if(d.vacations){Object.assign(VACATIONS,d.vacations);localStorage.setItem('aufguss_vacations',JSON.stringify(VACATIONS));}
+      if(d.experiments&&Array.isArray(d.experiments)){
+        experiments=d.experiments;
+        saveExperiments();
+      }
+      if(d.ratings){localStorage.setItem('aufguss_ratings',JSON.stringify(d.ratings));}
+      if(d.shift_notes){localStorage.setItem('aufguss_shift_notes',JSON.stringify(d.shift_notes));}
+      if(d.suppliers){localStorage.setItem('aufguss_suppliers',JSON.stringify(d.suppliers));}
+      if(d.themes){localStorage.setItem('aufguss_themes',JSON.stringify(d.themes));}
+      toast('✓ Import: '+count+' Einträge geladen');
+      renderLager();
+      buildDay();
+    }catch(err){
+      console.error('Import error:',err);
+      toast('✗ Import fehlgeschlagen: '+err.message,'red');
+    }
+  };
+  reader.onerror=function(){toast('✗ Datei konnte nicht gelesen werden','red');};
+  reader.readAsText(f);
+  if(ev.target)ev.target.value='';
+}
 
 /* Startup alert */
 function startAlert(){const crit=SCENTS.filter(s=>getStatus(s)==='kritisch');const low=SCENTS.filter(s=>getStatus(s)==='niedrig');const el=document.getElementById('start-alert');if(!el)return;if(!crit.length&&!low.length){el.innerHTML='';return;}let h='<div style="background:var(--bg2);border:1px solid var(--border2);border-radius:9px;padding:10px 15px;margin-bottom:13px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;box-shadow:var(--shadow)">';if(crit.length)h+=`<span style="background:var(--red-bg);color:var(--red);border-radius:5px;padding:3px 9px;font-size:12px;font-weight:700">⚠ ${crit.length} sofort bestellen</span>`;if(low.length)h+=`<span style="background:var(--amber-bg);color:var(--amber);border-radius:5px;padding:3px 9px;font-size:12px;font-weight:700">🟡 ${low.length} bald bestellen</span>`;h+=`<button onclick="showTab('lager',document.querySelector('.nb[onclick*=lager]'))" style="margin-left:auto;padding:4px 11px;background:var(--accent);border:none;border-radius:5px;color:#fff;font-size:12px;cursor:pointer;font-family:var(--font);font-weight:600">Zum Lager →</button>`;h+='</div>';el.innerHTML=h;}
@@ -1927,86 +2058,60 @@ function getCurrentSeason(){
 function generateSurprise(){
   const mode=document.getElementById('surp-mode').value;
   const season=getCurrentSeason();
-  const available=SCENTS.filter(s=>{
-    const st=getStatus(s);
-    return st!=='inactive'&&st!=='kritisch'||['exempt'].includes(st)||
-           (st==='ok'||st==='niedrig');
-  });
+  const available=SCENTS.filter(s=>getStatus(s)==='ok'||getStatus(s)==='niedrig');
   if(available.length<2){
-    document.getElementById('surp-result').innerHTML=
-      '<div style="color:var(--red);font-size:13px">Nicht genug verfügbare Düfte im Lager</div>';
+    document.getElementById('surp-result').innerHTML='<div style="color:var(--red);font-size:13px">Nicht genug verf\u00fcgbare D\u00fcfte</div>';
     return;
   }
-
-  let candidates=[...available];
-  let combo=[];
-
-  if(mode==='saison'){
-    const s=SEASONS[season];
-    const pref=candidates.filter(sc=>{
-      const n=SCENT_NOTES[sc.name];
-      return n&&s.scents.some(fam=>n.family===fam||n.mood.includes(fam.slice(0,4)));
-    });
-    candidates=pref.length>=2?pref:candidates;
-  } else if(mode==='kontrast'){
-    // Pick one from Kopfnote, one Herznote, one Basisnote
-    const K=candidates.filter(s=>SCENT_NOTES[s.name]&&SCENT_NOTES[s.name].note==='K');
-    const H=candidates.filter(s=>SCENT_NOTES[s.name]&&SCENT_NOTES[s.name].note==='H');
-    const B=candidates.filter(s=>SCENT_NOTES[s.name]&&SCENT_NOTES[s.name].note==='B');
-    if(K.length&&H.length&&B.length){
-      combo=[K[Math.floor(Math.random()*K.length)],
-             H[Math.floor(Math.random()*H.length)],
-             B[Math.floor(Math.random()*B.length)]];
-    }
-  }
-
-  if(!combo.length){
-    // Random 2-3 from candidates with harmony check
-    const shuffled=[...candidates].sort(()=>Math.random()-0.5);
-    combo=shuffled.slice(0,3);
-  }
-
-  const season_info=SEASONS[season];
-  const comboNames=combo.map(s=>s.name);
-
-  // Calculate harmony
-  let harmony=0;
-  combo.forEach(s=>{
-    const n=SCENT_NOTES[s.name];if(!n)return;
-    const matches=FMATCH[n.family]||[];
-    combo.forEach(other=>{
-      if(other.name===s.name)return;
-      const on=SCENT_NOTES[other.name];if(!on)return;
-      if(matches.includes(on.family))harmony++;
-    });
-  });
-  const maxH=combo.length*(combo.length-1);
-  const harmPct=maxH>0?Math.round(harmony/maxH*100):50;
-  const stars=harmPct>75?'⭐⭐⭐':harmPct>40?'⭐⭐':'⭐';
-
+  let cands=[...COMBOS];
+  if(mode==='saison') cands=cands.filter(c=>c.season===season||c.season==='Alle');
+  else if(mode==='morgen') cands=cands.filter(c=>c.timeOfDay==='Morgen'||c.timeOfDay==='Alle');
+  else if(mode==='mittag') cands=cands.filter(c=>c.timeOfDay==='Mittag'||c.timeOfDay==='Alle');
+  else if(mode==='abend') cands=cands.filter(c=>c.timeOfDay==='Abend'||c.timeOfDay==='Alle');
+  else if(mode==='kontrast') cands=cands.filter(c=>c.mood==='Energetisierend');
+  else if(mode==='entspannung') cands=cands.filter(c=>c.mood==='Beruhigend'||c.mood==='Meditativ');
+  if(!cands.length) cands=[...COMBOS];
+  const fullA=cands.filter(c=>c.scents.every(n=>{const sc=SCENTS.find(s=>s.name===n);return sc&&getStatus(sc)!=='inactive'&&getStatus(sc)!=='kritisch';}));
+  if(fullA.length) cands=fullA;
+  const combo=cands[Math.floor(Math.random()*cands.length)];
+  const MC={'Energetisierend':'#d97706','Beruhigend':'#2563eb','Heilend':'#16a34a','Romantisch':'#db2777','Meditativ':'#7c3aed','Gem\u00fctlich':'#ea580c'};
+  const SI={'Fr\u00fchling':'&#127800;','Sommer':'&#9728;','Herbst':'&#127810;','Winter':'&#10052;','Alle':'&#127744;'};
+  const TI={'Morgen':'&#127773;','Mittag':'&#9728;','Abend':'&#127750;','Alle':'&#128338;'};
+  const mc=MC[combo.mood]||'var(--text2)';
+  const rows=combo.scents.map(name=>{
+    const sc=SCENTS.find(s=>s.name===name);
+    const n=SCENT_NOTES[name];
+    const col=n?NCOLORS[n.note]:'var(--text3)';
+    const drops=sc?sc.drops:0;
+    const avail=sc&&getStatus(sc)!=='inactive';
+    return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">'+
+      '<span style="width:9px;height:9px;border-radius:50%;background:'+col+';display:inline-block;flex-shrink:0"></span>'+
+      '<span style="flex:1;font-size:13px;font-weight:600;'+(avail?'':'color:var(--text3)')+'">'+name+'</span>'+
+      (n?'<span style="font-size:10px;color:'+col+'">'+NLABELS[n.note]+'</span>':'')+
+      (drops>0?'<span style="font-size:12px;color:var(--text3);font-family:var(--mono)">'+drops+' Tr.</span>':'')+
+    '</div>';
+  }).join('');
+  const themeChips=(combo.themeNames||[]).slice(0,3).map(t=>
+    '<button onclick="document.getElementById(\'day-theme\').value=\''+t+'\';toast(\'&#10003; Thema &uuml;bernommen\')" '+
+    'style="font-size:11px;background:var(--accent-bg);color:var(--accent);border:1px solid rgba(37,99,235,.3);border-radius:5px;padding:3px 10px;cursor:pointer;font-family:var(--font)">'+t+'</button>'
+  ).join(' ');
   document.getElementById('surp-result').innerHTML=
     '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px">'+
-    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">'+
-      '<div style="font-size:14px;font-weight:700">'+season_info.emoji+' '+season+'-Überraschung</div>'+
-      '<div style="font-size:16px">'+stars+' Harmonie '+harmPct+'%</div>'+
+    '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;gap:8px">'+
+      '<div><div style="font-size:16px;font-weight:700">'+combo.name+'</div>'+
+      '<div style="font-size:12px;color:var(--text2);margin-top:2px">'+combo.desc+'</div></div>'+
+      '<span style="background:'+mc+'22;color:'+mc+';border-radius:8px;font-size:11px;padding:3px 9px;font-weight:600;white-space:nowrap">'+combo.mood+'</span>'+
+    '</div>'+rows+
+    '<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">'+
+      '<span style="font-size:12px">'+(SI[combo.season]||'')+' '+combo.season+'</span>'+
+      '<span style="font-size:12px;color:var(--text2)">'+(TI[combo.timeOfDay]||'')+' '+combo.timeOfDay+'</span>'+
     '</div>'+
-    combo.map(s=>{
-      const n=SCENT_NOTES[s.name];
-      const col=n?NCOLORS[n.note]:'var(--text2)';
-      return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">'+
-        '<span style="width:8px;height:8px;border-radius:50%;background:'+col+';display:inline-block;flex-shrink:0"></span>'+
-        '<span style="font-size:13px;font-weight:600;flex:1">'+s.name+'</span>'+
-        (n?'<span style="font-size:11px;color:'+col+'">'+NLABELS[n.note]+'</span>':'')+
-        '<span style="font-size:11px;color:var(--text3)">'+s.drops+' Tr.</span>'+
-      '</div>';
-    }).join('')+
+    (combo.reason?'<div style="margin-top:8px;background:var(--bg3);border-radius:7px;padding:8px 10px;font-size:11px;color:var(--text2)"><b>&#128161; Warum passt das?</b><br>'+combo.reason+'</div>':'')+
+    '<div style="margin-top:7px;font-size:13px;color:var(--green);font-weight:600">&#10024; '+combo.effect+'</div>'+
+    (themeChips?'<div style="margin-top:8px"><div style="font-size:10px;color:var(--text3);margin-bottom:5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Aufguss-Thema vorschlag:</div><div style="display:flex;gap:6px;flex-wrap:wrap">'+themeChips+'</div></div>':'')+
     '<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">'+
-      '<button onclick="applySurpriseToDay('+JSON.stringify(comboNames)+')" '+
-        'style="padding:7px 14px;background:var(--accent);border:none;border-radius:7px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font)">'+
-        '→ Heute übernehmen</button>'+
-      '<button onclick="generateSurprise()" '+
-        'style="padding:7px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;color:var(--text2);font-size:12px;cursor:pointer;font-family:var(--font)">'+
-        '🔄 Neu würfeln</button>'+
+      '<button onclick="applySurpriseToDay('+JSON.stringify(combo.scents)+')" style="padding:8px 16px;background:var(--accent);border:none;border-radius:7px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font)">&#8594; Heute \u00fcbernehmen</button>'+
+      '<button onclick="generateSurprise()" style="padding:8px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;color:var(--text2);font-size:12px;cursor:pointer;font-family:var(--font)">&#128260; Neu w\u00fcrf\u00fceln</button>'+
     '</div></div>';
 }
 
