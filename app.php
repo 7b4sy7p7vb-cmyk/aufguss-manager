@@ -12,15 +12,12 @@ if (!file_exists($f)) {
     exit;
 }
 
-// Cache verhindern - Browser soll immer die aktuelle Version laden
 header('Content-Type: text/html; charset=utf-8');
 header('Cache-Control: no-cache, no-store, must-revalidate');
 header('Pragma: no-cache');
 header('Expires: 0');
+// CSP: externe Wetter-APIs erlauben
+header("Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self' https://api.open-meteo.com https://api.qrserver.com; img-src 'self' data: https://api.qrserver.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com;");
 
-// clearstatcache() verhindert dass PHP die alte Dateigröße cached
 clearstatcache(true, $f);
-
-// Content-Length weglassen - verhindert Truncation bei neuen Dateiversionen
-// Datei direkt ausgeben
 readfile($f);

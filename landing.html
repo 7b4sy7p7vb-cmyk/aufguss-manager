@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SaunaManager.de — Professionelles Aufguss-Management</title>
+<meta name="description" content="Die professionelle Software für Saunen und Aufguss-Management. Tagesplan, Düfte, Bewertungen, Auswertungen — alles in einer App.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f8fafc;--bg3:#f1f5f9;
+  --text:#0f172a;--text2:#475569;--text3:#94a3b8;
+  --accent:#2563eb;--accent2:#1d4ed8;
+  --green:#16a34a;--amber:#d97706;
+  --border:#e2e8f0;
+  --shadow:0 4px 24px rgba(0,0,0,.08);
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+a{color:var(--accent);text-decoration:none}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:0 24px}
+.nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px}
+.nav-logo{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:700;color:var(--text)}
+.nav-logo svg{width:32px;height:32px}
+.nav-links{display:flex;align-items:center;gap:24px}
+.nav-links a{font-size:14px;color:var(--text2);font-weight:500}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{padding:8px 20px;background:var(--accent);color:#fff!important;border-radius:8px;font-weight:600!important;font-size:14px}
+.nav-cta:hover{background:var(--accent2)!important}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#eff6ff 0%,#f0fdf4 50%,#fefce8 100%);padding:80px 24px 60px;text-align:center}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;color:var(--accent);margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.hero h1{font-size:clamp(32px,5vw,56px);font-weight:800;color:var(--text);line-height:1.15;margin-bottom:18px;max-width:800px;margin-left:auto;margin-right:auto}
+.hero h1 span{color:var(--accent)}
+.hero p{font-size:18px;color:var(--text2);max-width:600px;margin:0 auto 32px}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-primary{padding:14px 32px;background:var(--accent);color:#fff;border-radius:10px;font-size:16px;font-weight:700;transition:all .2s;box-shadow:0 4px 14px rgba(37,99,235,.3)}
+.btn-primary:hover{background:var(--accent2);transform:translateY(-1px)}
+.btn-secondary{padding:14px 32px;background:#fff;color:var(--text);border:2px solid var(--border);border-radius:10px;font-size:16px;font-weight:600;transition:all .2s}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
+.hero-stats{display:flex;justify-content:center;gap:40px;margin-top:48px;flex-wrap:wrap}
+.hero-stat{text-align:center}
+.hero-stat-num{font-size:32px;font-weight:800;color:var(--accent)}
+.hero-stat-lbl{font-size:13px;color:var(--text3);margin-top:2px}
+
+/* FEATURES */
+.section{padding:80px 24px;max-width:1100px;margin:0 auto}
+.section-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);margin-bottom:10px}
+.section-title{font-size:clamp(24px,3vw,40px);font-weight:800;color:var(--text);margin-bottom:14px;line-height:1.2}
+.section-sub{font-size:17px;color:var(--text2);max-width:560px;margin-bottom:48px}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.feature-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:24px;transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.feature-card:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
+.feature-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:14px}
+.feature-card h3{font-size:16px;font-weight:700;margin-bottom:6px}
+.feature-card p{font-size:14px;color:var(--text2);line-height:1.5}
+
+/* SCREENSHOT AREA */
+.showcase{background:var(--bg2);padding:80px 24px}
+.showcase-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.showcase-text .section-label{text-align:left}
+.showcase-text h2{font-size:clamp(22px,3vw,36px);font-weight:800;margin-bottom:14px;line-height:1.2}
+.showcase-text p{font-size:16px;color:var(--text2);margin-bottom:20px}
+.check-list{list-style:none;display:flex;flex-direction:column;gap:10px}
+.check-list li{display:flex;align-items:center;gap:10px;font-size:15px;color:var(--text2)}
+.check-list li::before{content:'✓';color:var(--green);font-weight:700;font-size:16px;flex-shrink:0}
+.mockup{background:#fff;border:1px solid var(--border);border-radius:20px;padding:20px;box-shadow:var(--shadow)}
+.mockup-hdr{background:#0f172a;border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.mockup-dot{width:8px;height:8px;border-radius:50%;background:#ef4444}
+.mockup-dot:nth-child(2){background:#f59e0b}
+.mockup-dot:nth-child(3){background:#22c55e}
+.mockup-title{color:#94a3b8;font-size:11px;margin-left:auto;margin-right:auto}
+.mockup-row{display:flex;gap:8px;margin-bottom:8px}
+.mockup-badge{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600}
+.mockup-entry{background:#f8fafc;border-radius:8px;padding:10px 12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+.mockup-time{font-size:13px;font-weight:700;color:#2563eb}
+.mockup-name{font-size:13px;font-weight:600}
+.mockup-gaeste{font-size:12px;color:#64748b}
+.mockup-scent{font-size:11px;color:#7c3aed;background:#f5f3ff;padding:2px 7px;border-radius:10px}
+
+/* PRICING */
+.pricing{padding:80px 24px;text-align:center}
+.pricing-inner{max-width:1100px;margin:0 auto}
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:48px;text-align:left}
+.pricing-card{background:#fff;border:2px solid var(--border);border-radius:16px;padding:28px;position:relative}
+.pricing-card.featured{border-color:var(--accent);box-shadow:0 8px 30px rgba(37,99,235,.15)}
+.featured-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:4px 14px;border-radius:20px;white-space:nowrap}
+.plan-name{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:6px}
+.plan-price{font-size:36px;font-weight:800;color:var(--text);margin-bottom:4px}
+.plan-price span{font-size:16px;font-weight:500;color:var(--text3)}
+.plan-sub{font-size:13px;color:var(--text3);margin-bottom:20px}
+.plan-features{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
+.plan-features li{font-size:14px;color:var(--text2);display:flex;align-items:center;gap:8px}
+.plan-features li::before{content:'✓';color:var(--green);font-weight:700;flex-shrink:0}
+.plan-features li.no::before{content:'—';color:var(--text3)}
+.plan-btn{width:100%;padding:12px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;text-align:center;display:block}
+.plan-btn-primary{background:var(--accent);color:#fff;border:none}
+.plan-btn-primary:hover{background:var(--accent2)}
+.plan-btn-secondary{background:#fff;color:var(--accent);border:2px solid var(--accent)}
+.plan-btn-secondary:hover{background:#eff6ff}
+
+/* FAQ */
+.faq{background:var(--bg2);padding:80px 24px}
+.faq-inner{max-width:700px;margin:0 auto}
+.faq-item{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:10px;cursor:pointer}
+.faq-q{font-size:15px;font-weight:600;color:var(--text);display:flex;justify-content:space-between;align-items:center;gap:12px}
+.faq-a{font-size:14px;color:var(--text2);margin-top:12px;line-height:1.6;display:none}
+.faq-item.open .faq-a{display:block}
+.faq-item.open .faq-arrow{transform:rotate(180deg)}
+.faq-arrow{transition:transform .2s;color:var(--text3);flex-shrink:0}
+
+/* CTA SECTION */
+.cta-section{padding:80px 24px;text-align:center;background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%)}
+.cta-section h2{font-size:clamp(24px,3vw,40px);font-weight:800;color:#fff;margin-bottom:14px}
+.cta-section p{font-size:17px;color:rgba(255,255,255,.8);max-width:500px;margin:0 auto 32px}
+.btn-white{padding:14px 32px;background:#fff;color:var(--accent);border-radius:10px;font-size:16px;font-weight:700;transition:all .2s}
+.btn-white:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.2)}
+
+/* FOOTER */
+footer{background:#0f172a;color:#94a3b8;padding:40px 24px;text-align:center}
+.footer-inner{max-width:1100px;margin:0 auto}
+.footer-logo{font-size:18px;font-weight:700;color:#fff;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:8px}
+.footer-links{display:flex;gap:20px;justify-content:center;margin:16px 0;flex-wrap:wrap}
+.footer-links a{font-size:13px;color:#64748b}
+.footer-links a:hover{color:#94a3b8}
+.footer-copy{font-size:12px;color:#475569}
+
+@media(max-width:768px){
+  .showcase-inner{grid-template-columns:1fr}
+  .nav-links{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="32" height="32" rx="8" fill="#2563eb"/>
+        <path d="M6 22 C10 14, 14 10, 16 14 C18 18, 22 10, 26 14" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <path d="M6 26 C10 18, 14 14, 16 18 C18 22, 22 14, 26 18" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round" fill="none"/>
+      </svg>
+      SaunaManager
+    </a>
+    <div class="nav-links">
+      <a href="#features">Funktionen</a>
+      <a href="#preise">Preise</a>
+      <a href="#faq">FAQ</a>
+      <a href="https://saunamanager.de/demo.php" class="nav-cta">Demo ausprobieren →</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">🆕 Jetzt kostenlos testen — keine Kreditkarte nötig</div>
+  <h1>Professionelles<br><span>Aufguss-Management</span><br>für moderne Saunen</h1>
+  <p>Tagesplan, Düfte, Bewertungen, Auswertungen und Wetter-Analyse — alles in einer App. Entwickelt mit Saunaexperten.</p>
+  <div class="hero-btns">
+    <a href="https://saunamanager.de/demo.php" class="btn-primary">&#128640; Demo ausprobieren</a>
+    <a href="#features" class="btn-secondary">Funktionen ansehen</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="hero-stat-num">12</div><div class="hero-stat-lbl">Aufgüsse pro Tag geplant</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">100%</div><div class="hero-stat-lbl">Web-basiert — kein Install</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">∞</div><div class="hero-stat-lbl">Geräte synchronisiert</div></div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <div class="section-label">Funktionen</div>
+  <h2 class="section-title">Alles was eine Sauna braucht</h2>
+  <p class="section-sub">Von der täglichen Aufguss-Planung bis zur monatlichen Auswertung — SaunaManager deckt alles ab.</p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#eff6ff">✏️</div>
+      <h3>Tagesplan & Eingabe</h3>
+      <p>Alle Aufgüsse auf einen Blick. Düfte zuweisen, Gästezahlen erfassen, Mitarbeiter einteilen — in Sekunden erledigt.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#f0fdf4">🧴</div>
+      <h3>Duft-Lager</h3>
+      <p>Bestand überwachen, Bestellliste erstellen, Preise verwalten. Nie wieder unerwartet ohne Lieblingsduft dastehen.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#fdf4ff">📊</div>
+      <h3>Auswertungen</h3>
+      <p>Monatliche Statistiken, Stoßzeiten, Top-Düfte und Wetter-Korrelation. Datenbasierte Entscheidungen treffen.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#fff7ed">⭐</div>
+      <h3>Gäste-Bewertungen</h3>
+      <p>QR-Code ausdrucken, Gäste scannen und bewerten. Alle Kommentare und Sternebewertungen im Überblick.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#f0fdf4">📅</div>
+      <h3>Dienstplan</h3>
+      <p>Mitarbeiter planen, Urlaub eintragen, Feiertage und Schulferien (SA, TH, NI) automatisch berücksichtigt.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#fefce8">☁️</div>
+      <h3>Wetter-Integration</h3>
+      <p>Automatische Wetterdaten für Ihren Standort. Korrelation zwischen Wetter und Gästezahlen auf einen Blick.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#eff6ff">📱</div>
+      <h3>Display-System</h3>
+      <p>Tablet als Info-Display: nächster Aufguss, Werbeslides und automatische Bewertungsapp nach dem Aufguss.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#fdf4ff">🌸</div>
+      <h3>Duft-Berater</h3>
+      <p>40+ Kombinationsempfehlungen nach Jahreszeit, Tageszeit und Wirkung — mit Überraschungsgenerator.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#f0fdf4">🔄</div>
+      <h3>Geräte-Sync</h3>
+      <p>Alle Geräte im Betrieb greifen auf dieselben Daten zu. PC, Tablet, Smartphone — immer aktuell.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SHOWCASE -->
+<div class="showcase">
+  <div class="showcase-inner">
+    <div class="showcase-text">
+      <div class="section-label">Tagesplan</div>
+      <h2>Ein Blick — alles im Griff</h2>
+      <p>Starten Sie jeden Tag mit einem klaren Überblick. Alle Aufgüsse, Mitarbeiter und Düfte auf einen Blick.</p>
+      <ul class="check-list">
+        <li>12 Aufguss-Slots vorausgefüllt mit Themen</li>
+        <li>Düfte einfach per Dropdown zuweisen</li>
+        <li>Gästezahlen direkt eintragen</li>
+        <li>Autosave — nichts geht verloren</li>
+        <li>Wetter-Badge zeigt aktuelles Wetter</li>
+      </ul>
+    </div>
+    <div class="mockup">
+      <div class="mockup-hdr">
+        <div class="mockup-dot"></div>
+        <div class="mockup-dot"></div>
+        <div class="mockup-dot"></div>
+        <div class="mockup-title">SaunaManager — Tagesplan</div>
+      </div>
+      <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">
+        <span class="mockup-badge" style="background:#eff6ff;color:#2563eb">✏️ Eingabe</span>
+        <span class="mockup-badge" style="background:#f1f5f9;color:#64748b">🧴 Lager</span>
+        <span class="mockup-badge" style="background:#f1f5f9;color:#64748b">📊 Auswertung</span>
+      </div>
+      <div style="background:#eff6ff;border-radius:8px;padding:8px 12px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:13px;font-weight:600;color:#2563eb">← Mo 23.06.2026 →</span>
+        <span style="font-size:11px;background:#2563eb;color:#fff;padding:2px 8px;border-radius:10px">☀️ 24°C</span>
+      </div>
+      <div class="mockup-entry">
+        <div><div class="mockup-time">11:00</div><div class="mockup-name">Fit in den Tag</div></div>
+        <div style="text-align:right"><div class="mockup-gaeste">47 Gäste</div><div class="mockup-scent">🍋 Zitrone</div></div>
+      </div>
+      <div class="mockup-entry">
+        <div><div class="mockup-time">12:00</div><div class="mockup-name">Frühlingsduft</div></div>
+        <div style="text-align:right"><div class="mockup-gaeste">52 Gäste</div><div class="mockup-scent">🌹 Rose</div></div>
+      </div>
+      <div class="mockup-entry">
+        <div><div class="mockup-time">13:00</div><div class="mockup-name">Überraschung</div></div>
+        <div style="text-align:right"><div class="mockup-gaeste">38 Gäste</div><div class="mockup-scent">🌿 Eukalyptus</div></div>
+      </div>
+      <div style="text-align:center;font-size:11px;color:#94a3b8;margin-top:8px">+ 9 weitere Aufgüsse heute</div>
+    </div>
+  </div>
+</div>
+
+<!-- PRICING -->
+<section class="pricing" id="preise">
+  <div class="pricing-inner">
+    <div class="section-label" style="text-align:center">Preise</div>
+    <h2 class="section-title">Transparent und fair</h2>
+    <p style="font-size:17px;color:var(--text2);max-width:500px;margin:0 auto">Starten Sie kostenlos und upgraden Sie wenn Sie mehr brauchen. Keine versteckten Kosten.</p>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="plan-name">Free</div>
+        <div class="plan-price">0 €<span>/Monat</span></div>
+        <div class="plan-sub">Für immer kostenlos</div>
+        <ul class="plan-features">
+          <li>1 Sauna / Standort</li>
+          <li>Alle Grundfunktionen</li>
+          <li>Tagesplan & Lager</li>
+          <li>Gäste-Bewertungen</li>
+          <li class="no">Geräte-Sync</li>
+          <li class="no">Erweiterte Auswertungen</li>
+          <li class="no">Support</li>
+        </ul>
+        <a href="https://saunamanager.de" class="plan-btn plan-btn-secondary">Kostenlos registrieren</a>
+      </div>
+      <div class="pricing-card featured">
+        <div class="featured-badge">⭐ Beliebteste Wahl</div>
+        <div class="plan-name">Starter</div>
+        <div class="plan-price">19 €<span>/Monat</span></div>
+        <div class="plan-sub">Für kleine Saunen</div>
+        <ul class="plan-features">
+          <li>1 Sauna / Standort</li>
+          <li>Alle Grundfunktionen</li>
+          <li>Geräte-Sync (bis 3)</li>
+          <li>Wetter-Integration</li>
+          <li>Erweiterte Auswertungen</li>
+          <li>Display-System</li>
+          <li>E-Mail Support</li>
+        </ul>
+        <a href="https://saunamanager.de" class="plan-btn plan-btn-primary">Jetzt registrieren</a>
+      </div>
+      <div class="pricing-card">
+        <div class="plan-name">Professional</div>
+        <div class="plan-price">39 €<span>/Monat</span></div>
+        <div class="plan-sub">Für größere Betriebe</div>
+        <ul class="plan-features">
+          <li>Bis zu 3 Standorte</li>
+          <li>Unbegrenzte Geräte</li>
+          <li>Alle Starter-Funktionen</li>
+          <li>Jahresvergleich</li>
+          <li>PDF-Berichte</li>
+          <li>Priorität Support</li>
+          <li>Onboarding-Call</li>
+        </ul>
+        <a href="https://saunamanager.de" class="plan-btn plan-btn-secondary">Starten</a>
+      </div>
+      <div class="pricing-card">
+        <div class="plan-name">Enterprise</div>
+        <div class="plan-price">79 €<span>/Monat</span></div>
+        <div class="plan-sub">Für Sauna-Ketten</div>
+        <ul class="plan-features">
+          <li>Unbegrenzte Standorte</li>
+          <li>Unbegrenzte Geräte</li>
+          <li>Alle Pro-Funktionen</li>
+          <li>White-Label Option</li>
+          <li>API-Zugang</li>
+          <li>Dedizierter Support</li>
+          <li>Individuelle Anpassungen</li>
+        </ul>
+        <a href="mailto:info@saunamanager.de" class="plan-btn plan-btn-secondary">Kontakt aufnehmen</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <div class="faq-inner">
+    <div style="text-align:center;margin-bottom:40px">
+      <div class="section-label" style="text-align:center">FAQ</div>
+      <h2 class="section-title">Häufige Fragen</h2>
+    </div>
+    <div class="faq-item" onclick="toggleFAQ(this)">
+      <div class="faq-q">Brauche ich technisches Wissen? <span class="faq-arrow">▾</span></div>
+      <div class="faq-a">Nein. SaunaManager ist komplett webbasiert — kein Download, keine Installation. Einfach URL aufrufen und loslegen. Alles ist so einfach wie eine normale Website.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFAQ(this)">
+      <div class="faq-q">Funktioniert die App auf allen Geräten? <span class="faq-arrow">▾</span></div>
+      <div class="faq-a">Ja — PC, Mac, iPad, iPhone, Android-Tablet. Alle Geräte die einen modernen Browser haben. Die Daten werden automatisch synchronisiert.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFAQ(this)">
+      <div class="faq-q">Können mehrere Mitarbeiter gleichzeitig arbeiten? <span class="faq-arrow">▾</span></div>
+      <div class="faq-a">Ja. Mit dem Starter-Plan können bis zu 3 Geräte gleichzeitig auf dieselben Daten zugreifen und diese bearbeiten.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFAQ(this)">
+      <div class="faq-q">Sind unsere Daten sicher? <span class="faq-arrow">▾</span></div>
+      <div class="faq-a">Alle Daten werden verschlüsselt auf deutschen Servern gespeichert (IONOS). Passwortgeschützter Zugang, HTTPS-Verschlüsselung, regelmäßige Backups.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFAQ(this)">
+      <div class="faq-q">Kann ich die App kostenlos testen? <span class="faq-arrow">▾</span></div>
+      <div class="faq-a">Ja — der Free-Plan ist dauerhaft kostenlos. Keine Kreditkarte, keine Kündigung nötig. Einfach registrieren und loslegen.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFAQ(this)">
+      <div class="faq-q">Gibt es eine App für das Handy? <span class="faq-arrow">▾</span></div>
+      <div class="faq-a">Es gibt keine native App — aber die Website funktioniert perfekt auf dem Handy. Sie können sie auf dem Homescreen speichern und sie verhält sich wie eine echte App.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Bereit für professionelles Aufguss-Management?</h2>
+  <p>Starten Sie heute kostenlos. Keine Kreditkarte, keine Kündigung, keine versteckten Kosten.</p>
+  <a href="https://saunamanager.de/demo.php" class="btn-white">&#128640; Demo ausprobieren</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">
+      <svg width="24" height="24" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#2563eb"/><path d="M6 22 C10 14, 14 10, 16 14 C18 18, 22 10, 26 14" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"/><path d="M6 26 C10 18, 14 14, 16 18 C18 22, 22 14, 26 18" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+      SaunaManager.de
+    </div>
+    <p style="font-size:13px;margin-bottom:16px">Professionelles Aufguss-Management für moderne Saunen</p>
+    <div class="footer-links">
+      <a href="impressum.html">Impressum</a>
+      <a href="datenschutz.html">Datenschutz</a>
+      <a href="agb.html">AGB</a>
+      <a href="mailto:info@saunamanager.de">Kontakt</a>
+    </div>
+    <div class="footer-copy">© 2026 SaunaManager.de — Entwickelt mit ❤️ für Saunabetreiber</div>
+  </div>
+</footer>
+
+<script>
+function toggleFAQ(el){
+  el.classList.toggle('open');
+}
+</script>
+</body>
+</html>
