@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SaunaDisplay</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { 
+  font-family: 'Segoe UI', sans-serif; 
+  background: #0a0f1a; 
+  color: #fff; 
+  height: 100vh; 
+  overflow: hidden;
+  user-select: none;
+}
+
+/* ── MODES ── */
+#mode-info, #mode-rating, #mode-slide, #mode-idle { 
+  position: absolute; inset: 0; 
+  display: none; 
+  align-items: center; 
+  justify-content: center;
+  animation: fadeIn .8s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.active { display: flex !important; }
+
+/* ── INFO MODE ── */
+#mode-info {
+  background: linear-gradient(135deg, #0a0f1a 0%, #1a2744 100%);
+  flex-direction: column;
+  gap: 0;
+}
+.info-header {
+  width: 100%;
+  padding: 30px 50px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+}
+.info-logo { font-size: 28px; font-weight: 700; color: #60a5fa; }
+.info-clock { font-size: 48px; font-weight: 200; color: #fff; font-variant-numeric: tabular-nums; }
+.info-body { 
+  flex: 1; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  gap: 60px;
+  padding: 40px;
+}
+.info-next {
+  text-align: center;
+  flex: 1;
+}
+.info-next-label { font-size: 18px; color: #94a3b8; text-transform: uppercase; letter-spacing: .15em; margin-bottom: 16px; }
+.info-next-time { font-size: 100px; font-weight: 700; color: #60a5fa; line-height: 1; margin-bottom: 12px; }
+.info-next-theme { font-size: 36px; color: #e2e8f0; margin-bottom: 8px; }
+.info-next-staff { font-size: 22px; color: #94a3b8; }
+.info-divider { width: 1px; height: 200px; background: rgba(255,255,255,.1); }
+.info-upcoming {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.info-upcoming-title { font-size: 16px; color: #94a3b8; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 4px; }
+.upcoming-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  background: rgba(255,255,255,.05);
+  border-radius: 10px;
+  border-left: 3px solid #60a5fa;
+}
+.upcoming-time { font-size: 22px; font-weight: 700; color: #60a5fa; min-width: 70px; }
+.upcoming-theme { font-size: 18px; color: #e2e8f0; }
+.info-footer {
+  width: 100%;
+  padding: 16px 50px;
+  background: rgba(0,0,0,.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+.info-footer-text { font-size: 20px; color: #94a3b8; }
+.info-footer-highlight { color: #60a5fa; font-weight: 600; }
+
+/* ── SLIDE MODE ── */
+#mode-slide {
+  flex-direction: column;
+}
+.slide-bg {
+  position: absolute; inset: 0;
+  background-size: cover;
+  background-position: center;
+  transition: opacity 1s ease;
+}
+.slide-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,.85) 0%, rgba(0,0,0,.2) 60%, transparent 100%);
+}
+.slide-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding: 60px;
+  margin-top: auto;
+}
+.slide-tag {
+  display: inline-block;
+  background: #2563eb;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+}
+.slide-title { font-size: 52px; font-weight: 700; color: #fff; line-height: 1.1; margin-bottom: 12px; }
+.slide-subtitle { font-size: 26px; color: rgba(255,255,255,.8); }
+.slide-progress {
+  position: absolute;
+  bottom: 0; left: 0;
+  height: 4px;
+  background: #2563eb;
+  transition: width linear;
+}
+.slide-dots {
+  position: absolute;
+  bottom: 24px;
+  right: 40px;
+  display: flex;
+  gap: 8px;
+  z-index: 3;
+}
+.slide-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.3);
+  transition: background .3s;
+}
+.slide-dot.active { background: #fff; }
+
+/* ── RATING MODE ── */
+#mode-rating {
+  background: #0a0f1a;
+  flex-direction: column;
+  gap: 0;
+}
+.rating-header {
+  width: 100%;
+  padding: 24px 40px;
+  background: rgba(255,255,255,.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.rating-title { font-size: 24px; font-weight: 700; color: #60a5fa; }
+.rating-aufguss { font-size: 18px; color: #94a3b8; }
+.rating-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  gap: 32px;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.rating-question { font-size: 32px; font-weight: 700; text-align: center; color: #fff; margin-bottom: 8px; }
+.rating-sub { font-size: 18px; color: #94a3b8; text-align: center; margin-bottom: 24px; }
+.stars-row {
+  display: flex;
+  gap: 20px;
+}
+.star-btn {
+  font-size: 64px;
+  cursor: pointer;
+  transition: transform .2s, filter .2s;
+  filter: grayscale(1) opacity(.4);
+  background: none;
+  border: none;
+  padding: 8px;
+}
+.star-btn:hover, .star-btn.selected { filter: none; transform: scale(1.15); }
+.rating-submit {
+  margin-top: 16px;
+  padding: 18px 60px;
+  background: #2563eb;
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .2s, transform .1s;
+  display: none;
+}
+.rating-submit:hover { background: #1d4ed8; }
+.rating-submit.visible { display: block; }
+.rating-thankyou {
+  text-align: center;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.rating-thankyou.visible { display: flex; }
+.thankyou-icon { font-size: 80px; }
+.thankyou-text { font-size: 36px; font-weight: 700; color: #22c55e; }
+.thankyou-sub { font-size: 20px; color: #94a3b8; }
+
+/* ── IDLE MODE ── */
+#mode-idle {
+  background: radial-gradient(ellipse at center, #1a2744 0%, #0a0f1a 70%);
+  flex-direction: column;
+  gap: 20px;
+}
+.idle-time { font-size: 120px; font-weight: 100; color: rgba(255,255,255,.9); font-variant-numeric: tabular-nums; }
+.idle-date { font-size: 28px; color: rgba(255,255,255,.4); font-weight: 300; }
+.idle-logo { font-size: 20px; color: rgba(255,255,255,.2); margin-top: 20px; letter-spacing: .2em; text-transform: uppercase; }
+
+/* ── ADMIN OVERLAY ── */
+#admin-btn {
+  position: fixed;
+  bottom: 20px; right: 20px;
+  width: 44px; height: 44px;
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 50%;
+  color: rgba(255,255,255,.4);
+  font-size: 18px;
+  cursor: pointer;
+  z-index: 100;
+  transition: all .2s;
+}
+#admin-btn:hover { background: rgba(255,255,255,.2); color: #fff; }
+
+/* ── ADMIN PANEL ── */
+#admin-panel {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.9);
+  z-index: 200;
+  display: none;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 30px;
+}
+#admin-panel.open { display: flex; }
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.admin-header h2 { font-size: 24px; font-weight: 700; color: #60a5fa; }
+.admin-close {
+  background: rgba(255,255,255,.1);
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  width: 40px; height: 40px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.admin-section {
+  background: rgba(255,255,255,.05);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.admin-section h3 { font-size: 16px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 14px; }
+.admin-row { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px; flex-wrap: wrap; }
+.admin-input {
+  flex: 1; min-width: 200px;
+  padding: 10px 12px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+}
+.admin-input:focus { border-color: #60a5fa; }
+.admin-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  resize: vertical;
+  min-height: 80px;
+}
+.admin-btn {
+  padding: 10px 20px;
+  background: #2563eb;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+}
+.admin-btn.green { background: #16a34a; }
+.admin-btn.red { background: #dc2626; }
+.admin-btn.amber { background: #d97706; }
+.slide-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: rgba(255,255,255,.05);
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+.slide-item-text { flex: 1; font-size: 13px; color: #e2e8f0; }
+.schedule-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: rgba(255,255,255,.05);
+  border-radius: 8px;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+.schedule-time { color: #60a5fa; font-weight: 700; min-width: 80px; }
+.schedule-mode { 
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.mode-rating { background: #d97706; color: #fff; }
+.mode-slide { background: #2563eb; color: #fff; }
+.mode-info { background: #16a34a; color: #fff; }
+.mode-idle { background: #6b7280; color: #fff; }
+</style>
+</head>
+<body>
+
+<!-- INFO MODE -->
+<div id="mode-info" class="active">
+  <div class="info-header">
+    <div class="info-logo">🧖 Bodetal Therme</div>
+    <div class="info-clock" id="clock">--:--</div>
+  </div>
+  <div class="info-body">
+    <div class="info-next">
+      <div class="info-next-label">Nächster Aufguss</div>
+      <div class="info-next-time" id="next-time">--:--</div>
+      <div class="info-next-theme" id="next-theme">—</div>
+      <div class="info-next-staff" id="next-staff"></div>
+    </div>
+    <div class="info-divider"></div>
+    <div class="info-upcoming">
+      <div class="info-upcoming-title">Weitere Aufgüsse heute</div>
+      <div id="upcoming-list"></div>
+    </div>
+  </div>
+  <div class="info-footer">
+    <span class="info-footer-text">💡 Verpassen Sie nicht unsere</span>
+    <span class="info-footer-highlight" id="footer-scroll">Wellness-Angebote</span>
+  </div>
+</div>
+
+<!-- SLIDE MODE -->
+<div id="mode-slide">
+  <div class="slide-bg" id="slide-bg"></div>
+  <div class="slide-overlay"></div>
+  <div class="slide-content">
+    <div class="slide-tag" id="slide-tag">Angebot</div>
+    <div class="slide-title" id="slide-title">Titel</div>
+    <div class="slide-subtitle" id="slide-subtitle">Untertitel</div>
+  </div>
+  <div class="slide-progress" id="slide-progress"></div>
+  <div class="slide-dots" id="slide-dots"></div>
+</div>
+
+<!-- RATING MODE -->
+<div id="mode-rating">
+  <div class="rating-header">
+    <div class="rating-title">⭐ Wie war Ihr Aufguss?</div>
+    <div class="rating-aufguss" id="rating-info">Bitte bewerten Sie</div>
+  </div>
+  <div class="rating-body">
+    <div id="rating-form">
+      <div class="rating-question">Wie hat Ihnen der Aufguss gefallen?</div>
+      <div class="rating-sub">Tippen Sie auf einen Stern</div>
+      <div class="stars-row" id="stars">
+        <button class="star-btn" data-val="1" onclick="setStar(1)">⭐</button>
+        <button class="star-btn" data-val="2" onclick="setStar(2)">⭐</button>
+        <button class="star-btn" data-val="3" onclick="setStar(3)">⭐</button>
+        <button class="star-btn" data-val="4" onclick="setStar(4)">⭐</button>
+        <button class="star-btn" data-val="5" onclick="setStar(5)">⭐</button>
+      </div>
+      <button class="rating-submit" id="submit-btn" onclick="submitRating()">✓ Bewertung abschicken</button>
+    </div>
+    <div class="rating-thankyou" id="thankyou">
+      <div class="thankyou-icon">🙏</div>
+      <div class="thankyou-text">Vielen Dank!</div>
+      <div class="thankyou-sub">Ihre Bewertung wurde gespeichert.</div>
+    </div>
+  </div>
+</div>
+
+<!-- IDLE MODE -->
+<div id="mode-idle">
+  <div class="idle-time" id="idle-clock">--:--</div>
+  <div class="idle-date" id="idle-date"></div>
+  <div class="idle-logo">Bodetal Therme · Thale</div>
+</div>
+
+<!-- ADMIN BUTTON -->
+<button id="admin-btn" onclick="toggleAdmin()" title="Einstellungen">⚙</button>
+
+<!-- ADMIN PANEL -->
+<div id="admin-panel">
+  <div class="admin-header">
+    <h2>⚙ Display-Einstellungen</h2>
+    <button class="admin-close" onclick="toggleAdmin()">✕</button>
+  </div>
+
+  <!-- Slides -->
+  <div class="admin-section">
+    <h3>📢 Werbeslides</h3>
+    <div class="admin-row">
+      <input class="admin-input" id="new-tag" placeholder="Kategorie (z.B. Angebot, Info, Tipp)">
+      <input class="admin-input" id="new-title" placeholder="Titel (groß)">
+      <input class="admin-input" id="new-sub" placeholder="Untertitel">
+    </div>
+    <div class="admin-row">
+      <input class="admin-input" id="new-color" type="color" value="#2563eb" style="width:60px;height:40px;padding:4px;flex:0">
+      <input class="admin-input" id="new-img" placeholder="Bild-URL (optional, z.B. https://...)">
+      <input class="admin-input" id="new-duration" type="number" placeholder="Sekunden" value="15" style="width:100px;flex:0">
+      <button class="admin-btn green" onclick="addSlide()">+ Slide hinzufügen</button>
+    </div>
+    <div id="slides-list"></div>
+  </div>
+
+  <!-- Schedule -->
+  <div class="admin-section">
+    <h3>🕐 Zeitplan — Wann was läuft</h3>
+    <div class="admin-row">
+      <input class="admin-input" id="sch-start" type="time" placeholder="Von">
+      <input class="admin-input" id="sch-end" type="time" placeholder="Bis">
+      <select class="admin-input" id="sch-mode" style="flex:0;min-width:140px">
+        <option value="rating">⭐ Bewertung</option>
+        <option value="slide">📢 Werbeslides</option>
+        <option value="info">🧖 Aufguss-Info</option>
+        <option value="idle">🕐 Ruhemodus</option>
+      </select>
+      <button class="admin-btn green" onclick="addSchedule()">+ Hinzufügen</button>
+    </div>
+    <div id="schedule-list"></div>
+    <p style="font-size:12px;color:#6b7280;margin-top:8px">Außerhalb der Zeitpläne läuft automatisch Aufguss-Info</p>
+  </div>
+
+  <!-- Aufguss Info -->
+  <div class="admin-section">
+    <h3>🧖 Aufguss-Info anpassen</h3>
+    <div class="admin-row">
+      <input class="admin-input" id="venue-name" placeholder="Thermenname (z.B. Bodetal Therme Thale)">
+      <input class="admin-input" id="footer-text" placeholder="Lauftext unten (z.B. Wellness-Angebote)">
+      <button class="admin-btn" onclick="saveInfo()">Speichern</button>
+    </div>
+  </div>
+
+  <!-- Vorschau & Steuerung -->
+  <div class="admin-section">
+    <h3>▶ Vorschau & Steuerung</h3>
+    <div class="admin-row">
+      <button class="admin-btn" onclick="setMode('info')">🧖 Info</button>
+      <button class="admin-btn amber" onclick="setMode('rating')">⭐ Bewertung</button>
+      <button class="admin-btn" onclick="setMode('slide')">📢 Slides</button>
+      <button class="admin-btn" style="background:#374151" onclick="setMode('idle')">🕐 Ruhemodus</button>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:10px;margin-top:8px">
+    <button class="admin-btn green" onclick="saveAll()">💾 Alles speichern</button>
+    <button class="admin-btn red" onclick="toggleAdmin()">✕ Schließen</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════════════
+let slides = [];
+let schedule = [];
+let settings = {
+  venueName: 'Bodetal Therme Thale',
+  footerText: 'Wellness-Angebote',
+  slideIndex: 0
+};
+
+function loadData() {
+  try {
+    slides = JSON.parse(localStorage.getItem('display_slides') || '[]');
+    schedule = JSON.parse(localStorage.getItem('display_schedule') || '[]');
+    const s = JSON.parse(localStorage.getItem('display_settings') || '{}');
+    Object.assign(settings, s);
+    if (slides.length === 0) addDefaultSlides();
+    if (schedule.length === 0) addDefaultSchedule();
+  } catch(e) {}
+  renderAdmin();
+}
+
+function saveAll() {
+  localStorage.setItem('display_slides', JSON.stringify(slides));
+  localStorage.setItem('display_schedule', JSON.stringify(schedule));
+  localStorage.setItem('display_settings', JSON.stringify(settings));
+  showToast('✓ Gespeichert');
+  toggleAdmin();
+}
+
+function addDefaultSlides() {
+  slides = [
+    { tag: 'Tipp', title: 'Verpassen Sie nicht den nächsten Aufguss!', sub: 'Gleich geht es los — bereiten Sie sich vor', color: '#2563eb', img: '', duration: 15 },
+    { tag: 'Angebot', title: 'Freie Termine für Massage', sub: 'Jetzt an der Rezeption anfragen', color: '#16a34a', img: '', duration: 15 },
+    { tag: 'Info', title: 'Willkommen in der Bodetal Therme', sub: 'Entspannung pur in Thale', color: '#7c3aed', img: '', duration: 12 }
+  ];
+}
+
+function addDefaultSchedule() {
+  schedule = [
+    { start: '11:20', end: '11:45', mode: 'rating' },
+    { start: '12:20', end: '12:45', mode: 'rating' },
+    { start: '13:20', end: '13:45', mode: 'rating' },
+    { start: '14:20', end: '14:45', mode: 'rating' },
+    { start: '15:20', end: '15:45', mode: 'rating' },
+    { start: '16:20', end: '16:45', mode: 'rating' },
+    { start: '17:20', end: '17:45', mode: 'rating' },
+    { start: '18:20', end: '18:45', mode: 'rating' },
+    { start: '19:20', end: '19:45', mode: 'rating' },
+    { start: '20:20', end: '20:45', mode: 'rating' },
+    { start: '21:20', end: '21:45', mode: 'rating' },
+    { start: '23:00', end: '09:00', mode: 'idle' }
+  ];
+}
+
+// ══════════════════════════════════════════════════════
+// CLOCK & MODE CONTROLLER
+// ══════════════════════════════════════════════════════
+let currentMode = 'info';
+let slideTimer = null;
+let slideProgress = null;
+let currentSlideIdx = 0;
+
+function tick() {
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2,'0');
+  const mm = String(now.getMinutes()).padStart(2,'0');
+  const timeStr = hh + ':' + mm;
+
+  // Update clocks
+  document.getElementById('clock').textContent = timeStr;
+  document.getElementById('idle-clock').textContent = timeStr;
+  const days = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+  const months = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+  document.getElementById('idle-date').textContent = 
+    days[now.getDay()] + ', ' + now.getDate() + '. ' + months[now.getMonth()] + ' ' + now.getFullYear();
+
+  // Check schedule
+  const adminOpen = document.getElementById('admin-panel').classList.contains('open');
+  if (!adminOpen) {
+    const scheduled = getScheduledMode(timeStr);
+    if (scheduled && scheduled !== currentMode) {
+      setMode(scheduled);
+    }
+  }
+
+  // Update info panel
+  if (currentMode === 'info') updateInfoPanel();
+}
+
+function getScheduledMode(timeStr) {
+  for (const s of schedule) {
+    if (timeInRange(timeStr, s.start, s.end)) return s.mode;
+  }
+  return 'info';
+}
+
+function timeInRange(time, start, end) {
+  if (start <= end) return time >= start && time < end;
+  return time >= start || time < end; // overnight
+}
+
+function setMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('[id^="mode-"]').forEach(el => el.classList.remove('active'));
+  document.getElementById('mode-' + mode).classList.add('active');
+  if (mode === 'slide') startSlideshow();
+  if (mode === 'rating') resetRating();
+}
+
+// ══════════════════════════════════════════════════════
+// INFO PANEL
+// ══════════════════════════════════════════════════════
+function updateInfoPanel() {
+  const now = new Date();
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+
+  // Try to get aufguss data from saunamanager
+  let aufguesse = [];
+  try {
+    const entries = JSON.parse(localStorage.getItem('aufguss_v2') || '[]');
+    const today = now.toISOString().split('T')[0];
+    aufguesse = entries
+      .filter(e => e.date === today)
+      .sort((a,b) => a.hour - b.hour)
+      .map(e => ({
+        time: String(e.hour).padStart(2,'0') + ':00',
+        timeMin: e.hour * 60,
+        theme: e.note || (e.d1 ? e.d1 + (e.d2 ? ' & ' + e.d2 : '') : 'Aufguss'),
+        staff: e.staff || ''
+      }));
+  } catch(e) {}
+
+  // Find next
+  const upcoming = aufguesse.filter(a => a.timeMin > nowMin);
+  const next = upcoming[0];
+
+  if (next) {
+    document.getElementById('next-time').textContent = next.time;
+    document.getElementById('next-theme').textContent = next.theme;
+    document.getElementById('next-staff').textContent = next.staff ? 'mit ' + next.staff : '';
+  } else {
+    document.getElementById('next-time').textContent = 'Heute';
+    document.getElementById('next-theme').textContent = 'Keine weiteren Aufgüsse';
+    document.getElementById('next-staff').textContent = '';
+  }
+
+  // Upcoming list (next 4)
+  const list = document.getElementById('upcoming-list');
+  const future = upcoming.slice(1, 5);
+  list.innerHTML = future.length ? future.map(a =>
+    '<div class="upcoming-item"><span class="upcoming-time">' + a.time + '</span><span class="upcoming-theme">' + a.theme + '</span></div>'
+  ).join('') : '<div style="color:#6b7280;font-size:16px">Keine weiteren Aufgüsse geplant</div>';
+
+  document.getElementById('footer-scroll').textContent = settings.footerText;
+}
+
+// ══════════════════════════════════════════════════════
+// SLIDESHOW
+// ══════════════════════════════════════════════════════
+function startSlideshow() {
+  clearTimeout(slideTimer);
+  clearInterval(slideProgress);
+  if (slides.length === 0) return;
+  showSlide(currentSlideIdx % slides.length);
+}
+
+function showSlide(idx) {
+  if (slides.length === 0) return;
+  currentSlideIdx = idx;
+  const s = slides[idx];
+
+  document.getElementById('slide-tag').textContent = s.tag;
+  document.getElementById('slide-tag').style.background = s.color;
+  document.getElementById('slide-title').textContent = s.title;
+  document.getElementById('slide-subtitle').textContent = s.sub;
+
+  const bg = document.getElementById('slide-bg');
+  if (s.img) {
+    bg.style.backgroundImage = 'url(' + s.img + ')';
+    bg.style.opacity = '1';
+  } else {
+    bg.style.backgroundImage = 'none';
+    bg.style.background = 'linear-gradient(135deg, ' + s.color + '22 0%, #0a0f1a 100%)';
+    bg.style.opacity = '1';
+  }
+
+  // Dots
+  const dots = document.getElementById('slide-dots');
+  dots.innerHTML = slides.map((_,i) =>
+    '<div class="slide-dot' + (i===idx?' active':'') + '"></div>'
+  ).join('');
+
+  // Progress bar
+  const dur = (s.duration || 15) * 1000;
+  const prog = document.getElementById('slide-progress');
+  prog.style.transition = 'none';
+  prog.style.width = '0%';
+  setTimeout(() => {
+    prog.style.transition = 'width ' + (dur/1000) + 's linear';
+    prog.style.width = '100%';
+  }, 50);
+
+  slideTimer = setTimeout(() => {
+    if (currentMode === 'slide') showSlide((idx + 1) % slides.length);
+  }, dur);
+}
+
+// ══════════════════════════════════════════════════════
+// RATING
+// ══════════════════════════════════════════════════════
+let selectedStar = 0;
+let ratingSubmitted = false;
+
+function resetRating() {
+  selectedStar = 0;
+  ratingSubmitted = false;
+  document.querySelectorAll('.star-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('submit-btn').classList.remove('visible');
+  document.getElementById('rating-form').style.display = 'flex';
+  document.getElementById('rating-form').style.flexDirection = 'column';
+  document.getElementById('rating-form').style.alignItems = 'center';
+  document.getElementById('rating-form').style.gap = '20px';
+  document.getElementById('thankyou').classList.remove('visible');
+
+  // Show current aufguss info
+  try {
+    const now = new Date();
+    const entries = JSON.parse(localStorage.getItem('aufguss_v2') || '[]');
+    const today = now.toISOString().split('T')[0];
+    const hour = now.getHours();
+    const recent = entries.filter(e => e.date === today && Math.abs(e.hour - hour) <= 1)
+      .sort((a,b) => Math.abs(a.hour-hour) - Math.abs(b.hour-hour))[0];
+    if (recent) {
+      document.getElementById('rating-info').textContent =
+        String(recent.hour).padStart(2,'0') + ':00 Uhr — ' + (recent.d1 || 'Aufguss') + (recent.d2 ? ' & ' + recent.d2 : '');
+    }
+  } catch(e) {}
+}
+
+function setStar(val) {
+  selectedStar = val;
+  document.querySelectorAll('.star-btn').forEach(b => {
+    b.classList.toggle('selected', parseInt(b.dataset.val) <= val);
+  });
+  document.getElementById('submit-btn').classList.add('visible');
+}
+
+function submitRating() {
+  if (!selectedStar || ratingSubmitted) return;
+  ratingSubmitted = true;
+
+  // Save rating
+  try {
+    const ratings = JSON.parse(localStorage.getItem('display_ratings') || '[]');
+    ratings.push({ stars: selectedStar, time: new Date().toISOString() });
+    localStorage.setItem('display_ratings', JSON.stringify(ratings));
+  } catch(e) {}
+
+  document.getElementById('rating-form').style.display = 'none';
+  document.getElementById('thankyou').classList.add('visible');
+
+  // Return to slides after 4 seconds
+  setTimeout(() => {
+    setMode('slide');
+  }, 4000);
+}
+
+// ══════════════════════════════════════════════════════
+// ADMIN
+// ══════════════════════════════════════════════════════
+function toggleAdmin() {
+  document.getElementById('admin-panel').classList.toggle('open');
+  renderAdmin();
+}
+
+function renderAdmin() {
+  // Slides list
+  const sl = document.getElementById('slides-list');
+  sl.innerHTML = slides.map((s,i) =>
+    '<div class="slide-item">' +
+    '<div class="slide-dot" style="background:' + s.color + ';width:12px;height:12px;flex-shrink:0"></div>' +
+    '<div class="slide-item-text"><b>' + s.tag + ':</b> ' + s.title + ' — <i>' + s.sub + '</i>' + (s.duration ? ' (' + s.duration + 's)' : '') + '</div>' +
+    '<button class="admin-btn" style="background:#374151;padding:6px 10px" onclick="editSlide(' + i + ')">✏</button>' +
+    '<button class="admin-btn red" style="padding:6px 10px" onclick="deleteSlide(' + i + ')">✕</button>' +
+    '</div>'
+  ).join('') || '<p style="color:#6b7280;font-size:13px">Noch keine Slides</p>';
+
+  // Schedule list
+  const sc = document.getElementById('schedule-list');
+  const modeLabels = {rating:'⭐ Bewertung', slide:'📢 Werbeslides', info:'🧖 Info', idle:'🕐 Ruhe'};
+  sc.innerHTML = schedule
+    .sort((a,b) => a.start.localeCompare(b.start))
+    .map((s,i) =>
+      '<div class="schedule-item">' +
+      '<span class="schedule-time">' + s.start + ' – ' + s.end + '</span>' +
+      '<span class="schedule-mode mode-' + s.mode + '">' + (modeLabels[s.mode]||s.mode) + '</span>' +
+      '<button class="admin-btn red" style="padding:4px 8px;margin-left:auto" onclick="deleteSchedule(' + i + ')">✕</button>' +
+      '</div>'
+    ).join('') || '<p style="color:#6b7280;font-size:13px">Noch kein Zeitplan</p>';
+
+  // Settings
+  const vn = document.getElementById('venue-name');
+  const ft = document.getElementById('footer-text');
+  if (vn) vn.value = settings.venueName || '';
+  if (ft) ft.value = settings.footerText || '';
+}
+
+function addSlide() {
+  const tag = document.getElementById('new-tag').value.trim() || 'Info';
+  const title = document.getElementById('new-title').value.trim();
+  const sub = document.getElementById('new-sub').value.trim();
+  const color = document.getElementById('new-color').value;
+  const img = document.getElementById('new-img').value.trim();
+  const duration = parseInt(document.getElementById('new-duration').value) || 15;
+  if (!title) { showToast('Bitte Titel eingeben', 'red'); return; }
+  slides.push({ tag, title, sub, color, img, duration });
+  ['new-tag','new-title','new-sub','new-img'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('new-duration').value = '15';
+  renderAdmin();
+  showToast('✓ Slide hinzugefügt');
+}
+
+function deleteSlide(i) {
+  slides.splice(i, 1);
+  renderAdmin();
+}
+
+function editSlide(i) {
+  const s = slides[i];
+  document.getElementById('new-tag').value = s.tag;
+  document.getElementById('new-title').value = s.title;
+  document.getElementById('new-sub').value = s.sub;
+  document.getElementById('new-color').value = s.color;
+  document.getElementById('new-img').value = s.img || '';
+  document.getElementById('new-duration').value = s.duration || 15;
+  slides.splice(i, 1);
+  renderAdmin();
+}
+
+function addSchedule() {
+  const start = document.getElementById('sch-start').value;
+  const end = document.getElementById('sch-end').value;
+  const mode = document.getElementById('sch-mode').value;
+  if (!start || !end) { showToast('Bitte Start- und Endzeit eingeben', 'red'); return; }
+  schedule.push({ start, end, mode });
+  renderAdmin();
+  showToast('✓ Zeitplan hinzugefügt');
+}
+
+function deleteSchedule(i) {
+  schedule.splice(i, 1);
+  renderAdmin();
+}
+
+function saveInfo() {
+  settings.venueName = document.getElementById('venue-name').value.trim();
+  settings.footerText = document.getElementById('footer-text').value.trim();
+  document.getElementById('info-logo').textContent = '🧖 ' + (settings.venueName || 'Bodetal Therme');
+  showToast('✓ Gespeichert');
+}
+
+function showToast(msg, type) {
+  const t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:' +
+    (type==='red'?'#dc2626':'#16a34a') + ';color:#fff;padding:12px 24px;border-radius:8px;font-size:16px;font-weight:700;z-index:999;animation:fadeIn .3s ease';
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+}
+
+// ══════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════
+loadData();
+tick();
+setInterval(tick, 1000);
+setMode('info');
+</script>
+</body>
+</html>
