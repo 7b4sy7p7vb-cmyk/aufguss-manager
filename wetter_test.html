@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="de">
+<head><meta charset="UTF-8"><title>Wetter-Test</title>
+<style>
+body{font-family:monospace;padding:20px;background:#1a1d23;color:#e2e8f0}
+.ok{color:#4ade80} .err{color:#f87171} .info{color:#93c5fd}
+pre{background:#0f172a;padding:12px;border-radius:8px;overflow:auto;font-size:12px}
+button{padding:10px 20px;background:#2563eb;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:14px;margin:5px}
+</style>
+</head>
+<body>
+<h2>🌤 Wetter API Test — Thale (51.7°N / 11.05°E)</h2>
+<button onclick="test1()">Test 1: current_weather=true</button>
+<button onclick="test2()">Test 2: current=temperature_2m,weather_code</button>
+<button onclick="test3()">Test 3: current=temperature_2m,weathercode</button>
+<div id="out"></div>
+
+<script>
+function show(title, data, isErr){
+  document.getElementById('out').innerHTML +=
+    `<h3 class="${isErr?'err':'ok'}">${title}</h3><pre>${JSON.stringify(data,null,2).substring(0,2000)}</pre>`;
+}
+
+async function test1(){
+  document.getElementById('out').innerHTML='<p class="info">Teste Test 1...</p>';
+  try{
+    const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude=51.7&longitude=11.05&current_weather=true&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weathercode,sunshine_duration&timezone=Europe%2FBerlin&forecast_days=1');
+    const d=await r.json();
+    show('Test 1 Antwort (current_weather=true)', d, false);
+    if(d.current_weather){
+      show('✅ current_weather Felder:', {
+        temperature: d.current_weather.temperature,
+        weathercode: d.current_weather.weathercode,
+        windspeed: d.current_weather.windspeed
+      }, false);
+    } else {
+      show('❌ kein current_weather Objekt!', d, true);
+    }
+  }catch(e){ show('FEHLER Test 1', e.toString(), true); }
+}
+
+async function test2(){
+  document.getElementById('out').innerHTML='<p class="info">Teste Test 2...</p>';
+  try{
+    const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude=51.7&longitude=11.05&current=temperature_2m,weather_code&timezone=Europe%2FBerlin');
+    const d=await r.json();
+    show('Test 2 Antwort (current=temperature_2m,weather_code)', d, false);
+    if(d.current){
+      show('✅ current Felder:', {
+        temperature_2m: d.current.temperature_2m,
+        weather_code: d.current.weather_code
+      }, false);
+    } else {
+      show('❌ kein current Objekt!', d, true);
+    }
+  }catch(e){ show('FEHLER Test 2', e.toString(), true); }
+}
+
+async function test3(){
+  document.getElementById('out').innerHTML='<p class="info">Teste Test 3...</p>';
+  try{
+    const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude=51.7&longitude=11.05&current=temperature_2m,weathercode&timezone=Europe%2FBerlin');
+    const d=await r.json();
+    show('Test 3 Antwort (current=temperature_2m,weathercode - alt)', d, false);
+  }catch(e){ show('FEHLER Test 3', e.toString(), true); }
+}
+</script>
+</body>
+</html>
