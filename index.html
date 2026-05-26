@@ -1169,9 +1169,8 @@ function buildDay(){
       updateWetterBadge(_dw.code,_dw.tmax);
     } else if(ds===new Date().toISOString().split('T')[0]){
       fetchWetter().then(function(d){
-        if(d){
-        var _wc=d.current.weathercode!=null?d.current.weathercode:d.current.weather_code;
-        updateWetterBadge(_wc,d.current.temperature_2m);
+        if(d&&d.current_weather){
+        updateWetterBadge(d.current_weather.weathercode,d.current_weather.temperature);
       }
       }).catch(function(){});
     }
@@ -2834,9 +2833,16 @@ function getWMO(code){
 
 async function fetchWetter(){
   try{
-    const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude=51.7&longitude=11.05&current=temperature_2m,weathercode&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weathercode,sunshine_duration&timezone=Europe%2FBerlin&forecast_days=7');
+    // current_weather=true: stabilstes Format, liefert current_weather.temperature + current_weather.weathercode
+    const url='https://api.open-meteo.com/v1/forecast'
+      +'?latitude=51.7&longitude=11.05'
+      +'&current_weather=true'
+      +'&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weathercode,sunshine_duration'
+      +'&timezone=Europe%2FBerlin&forecast_days=7';
+    const r=await fetch(url);
     if(!r.ok)return null;
-    return await r.json();
+    const data=await r.json();
+    return data;
   }catch(e){return null;}
 }
 
